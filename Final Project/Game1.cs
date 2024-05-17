@@ -2,9 +2,25 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 
 namespace Final_Project
 {
+    //Wilson
+
+    enum PlayerState
+    {
+        Idle,
+        WalkLeft,
+        WalkRight,
+        RunLeft,
+        RunRight,
+        Attack,
+        DashAttack,
+        Jump,
+        Dead
+    }
+
     public class Game1 : Game
     {
         Player player;
@@ -13,13 +29,16 @@ namespace Final_Project
         private SpriteBatch _spriteBatch;
 
         KeyboardState keyboardState;
+        PlayerState playerState;
 
-        Texture2D playerAttackTexture;
-        Texture2D playerIdleTexture; //53x58
-        Texture2D playerDeathTexture;
+        List<Texture2D> playerTextures = new List<Texture2D>();
+        
+        Texture2D playerIdleTexture; //53x58 is the sprite size on the sheet, sheet size is 896 x 128
+        Texture2D playerWalkTexture;
         Texture2D playerRunTexture;
         Texture2D playerRunAttackTexture;
-        Texture2D playerWalkTexture; 
+        Texture2D playerAttackTexture;
+        Texture2D playerDeathTexture; 
 
         public Game1()
         {
@@ -32,9 +51,16 @@ namespace Final_Project
         {
             // TODO: Add your initialization logic here
 
+            playerTextures.Add(playerIdleTexture);
+            playerTextures.Add(playerWalkTexture);
+            playerTextures.Add(playerRunTexture);
+            playerTextures.Add(playerRunAttackTexture);
+            playerTextures.Add(playerAttackTexture);
+            playerTextures.Add(playerDeathTexture);
+
             base.Initialize();
-            player = new Player(playerIdleTexture, 50, 50);
-            
+
+            player = new Player(playerTextures, 50, 50);
         }
 
         protected override void LoadContent()
@@ -61,27 +87,7 @@ namespace Final_Project
 
             // TODO: Add your update logic here
 
-            if (keyboardState.IsKeyDown(Keys.A) && keyboardState.IsKeyDown(Keys.LeftShift))
-            {
-
-            }
-            else if (keyboardState.IsKeyDown(Keys.D) && keyboardState.IsKeyDown(Keys.LeftShift))
-            {
-
-            }
-            else if (keyboardState.IsKeyDown(Keys.A))
-            {
-
-            }
-            else if (keyboardState.IsKeyDown(Keys.D))
-            {
-
-            }
-
-            if (keyboardState.IsKeyDown(Keys.Space))
-            {
-
-            }
+            player.Update(gameTime, keyboardState);
 
             base.Update(gameTime);
         }
