@@ -51,15 +51,14 @@ namespace Final_Project
         {
             // TODO: Add your initialization logic here
 
+            base.Initialize();
+
             playerTextures.Add(playerIdleTexture);
             playerTextures.Add(playerWalkTexture);
             playerTextures.Add(playerRunTexture);
             playerTextures.Add(playerRunAttackTexture);
             playerTextures.Add(playerAttackTexture);
             playerTextures.Add(playerDeathTexture);
-
-            base.Initialize();
-
             player = new Player(playerTextures, 50, 50);
         }
 

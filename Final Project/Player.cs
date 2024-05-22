@@ -25,7 +25,7 @@ namespace Final_Project
         public Player(List<Texture2D> textures, int x, int y)
         {
             _textures = textures;
-            _location = new Rectangle(x, y, 53, 58);
+            _location = new Rectangle(x, y, 80, 75);
             _speed = new Vector2();
             _state = PlayerState.Idle;
         }
@@ -33,7 +33,9 @@ namespace Final_Project
         public void Update(GameTime gameTime, KeyboardState keyboardState)
         {
             _state = PlayerState.Idle;
-            
+
+            _seconds += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
             if (keyboardState.IsKeyDown(Keys.A) && keyboardState.IsKeyDown(Keys.LeftShift)) //Running left
             {
                 
@@ -42,34 +44,108 @@ namespace Final_Project
             {
                 
             }
-            else if (keyboardState.IsKeyDown(Keys.A)) //Walking left
+            else if (keyboardState.IsKeyDown(Keys.A)) //Walking left. Widest frame is 59
             {
+                _state = PlayerState.WalkLeft;
 
+                if (_state == PlayerState.WalkLeft)
+                {
+                    if (_seconds >= 0.1)
+                    {
+                        if (_frame == 0)
+                        {
+                            _spriteFrame = new Rectangle(46, 56, 80, 65);
+
+                            _frame++;
+                        }
+                        else if (_frame == 1)
+                        {
+                            _spriteFrame = new Rectangle(142, 56, 80, 65);
+
+                            _frame++;
+                        }
+                        else if (_frame == 2)
+                        {
+                            _spriteFrame = new Rectangle(294, 56, 80, 65);
+                            _frame++;
+                        }
+                        else if (_frame == 3)
+                        {
+                            _spriteFrame = new Rectangle(422, 56, 80, 65);
+                            _frame++;
+                        }
+                        else if (_frame == 4)
+                        {
+                            _spriteFrame = new Rectangle(550, 56, 80, 65);
+                            _frame++;
+                        }
+                        else if (_frame == 5)
+                        {
+                            _spriteFrame = new Rectangle(678, 56, 80, 58);
+                            _frame++;
+                        }
+                        else if (_frame == 6)
+                        {
+                            _spriteFrame = new Rectangle(806, 56, 80, 58);
+                            _frame = 0;
+                        }
+                        _seconds = 0;
+                    }
+                }
             }
             else if (keyboardState.IsKeyDown(Keys.D)) //Walking right
             {
 
             }
-
+            
             if (keyboardState.IsKeyUp(Keys.None))
             {
-                
-            }
-
-            _seconds += (float)gameTime.ElapsedGameTime.TotalSeconds;
-            if (_state == PlayerState.Idle)
-            {
-                if (_seconds >= 0.4)
+                if (_state == PlayerState.Idle)
                 {
-                    if (_frame == 0)
+                    if (_seconds >= 0.1)
                     {
-                        _spriteFrame = new Rectangle();
+                        if (_frame == 0)
+                        {
+                            _spriteFrame = new Rectangle(38, 70, 80, 58);
+
+                            _frame++;
+                        }
+                        else if (_frame == 1)
+                        {
+                            _spriteFrame = new Rectangle(166, 70, 80, 58);
+
+                            _frame++;
+                        }
+                        else if (_frame == 2)
+                        {
+                            _spriteFrame = new Rectangle(294, 70, 80, 58);
+                            _frame++;
+                        }
+                        else if (_frame == 3)
+                        {
+                            _spriteFrame = new Rectangle(422, 70, 80, 58);
+                            _frame++;
+                        }
+                        else if (_frame == 4)
+                        {
+                            _spriteFrame = new Rectangle(550, 70, 80, 58);
+                            _frame++;
+                        }
+                        else if (_frame == 5)
+                        {
+                            _spriteFrame = new Rectangle(678, 70, 80, 58);
+                            _frame++;
+                        }
+                        else if (_frame == 6)
+                        {
+                            _spriteFrame = new Rectangle(806, 70, 80, 58);
+                            _frame = 0;
+                        }
+                        
+                        _seconds = 0;
                     }
-                    
-                    _frame++;
                 }
             }
-
         }
 
         public PlayerState State 
@@ -98,7 +174,14 @@ namespace Final_Project
 
         public void Draw(SpriteBatch spriteBatch) 
         {
-            spriteBatch.Draw(_textures[(int)_state], _location, _spriteFrame, Color.White);
+            if (_state == PlayerState.RunLeft || _state == PlayerState.WalkLeft)
+            {
+                spriteBatch.Draw(_textures[(int)_state], _location, _spriteFrame, Color.White, 0f, new Vector2(0,0), SpriteEffects.FlipHorizontally, 0f);
+            }
+            else
+            {
+                spriteBatch.Draw(_textures[(int)_state], _location, _spriteFrame, Color.White);
+            }
         }
     }
 }
