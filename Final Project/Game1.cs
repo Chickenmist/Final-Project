@@ -11,10 +11,8 @@ namespace Final_Project
     enum PlayerState
     {
         Idle,
-        WalkLeft,
-        WalkRight,
-        RunLeft,
-        RunRight,
+        Walk,
+        Run,
         Attack,
         DashAttack,
         Jump,
@@ -29,16 +27,23 @@ namespace Final_Project
         private SpriteBatch _spriteBatch;
 
         KeyboardState keyboardState;
+        MouseState mouseState;
         PlayerState playerState;
 
         List<Texture2D> playerTextures = new List<Texture2D>();
         
-        Texture2D playerIdleTexture; //53x58 is the sprite size on the sheet, sheet size is 896 x 128
+        Texture2D playerIdleTexture;
         Texture2D playerWalkTexture;
         Texture2D playerRunTexture;
         Texture2D playerRunAttackTexture;
         Texture2D playerAttackTexture;
-        Texture2D playerDeathTexture; 
+        Texture2D playerDeathTexture;
+        Texture2D playerJumpTexture;
+
+        Rectangle background;
+
+        Texture2D skyTexture;
+        Texture2D hillsAndTreesTexture;
 
         public Game1()
         {
@@ -51,13 +56,17 @@ namespace Final_Project
         {
             // TODO: Add your initialization logic here
 
+            _graphics.PreferredBackBufferWidth = 1920;
+            _graphics.PreferredBackBufferHeight = 1080;
+
             base.Initialize();
 
             playerTextures.Add(playerIdleTexture);
             playerTextures.Add(playerWalkTexture);
             playerTextures.Add(playerRunTexture);
-            playerTextures.Add(playerRunAttackTexture);
             playerTextures.Add(playerAttackTexture);
+            playerTextures.Add(playerRunAttackTexture);
+            playerTextures.Add(playerJumpTexture);
             playerTextures.Add(playerDeathTexture);
             player = new Player(playerTextures, 50, 50);
         }
@@ -68,12 +77,18 @@ namespace Final_Project
 
             // TODO: use this.Content to load your game content here
             
+            //Player Sprites
             playerAttackTexture = Content.Load<Texture2D>("Skeleton Attack");
             playerIdleTexture = Content.Load<Texture2D>("Skeleton Idle");
             playerDeathTexture = Content.Load<Texture2D>("Skeleton Dead");
             playerRunTexture = Content.Load<Texture2D>("Skeleton Run");
             playerRunAttackTexture = Content.Load<Texture2D>("Skeleton Run Attack");
             playerWalkTexture = Content.Load<Texture2D>("Skeleton Walk");
+            playerJumpTexture = Content.Load<Texture2D>("Skeleton Jump");
+            //
+
+            //Background Sprites
+            
 
         }
 
@@ -86,7 +101,9 @@ namespace Final_Project
 
             // TODO: Add your update logic here
 
-            player.Update(gameTime, keyboardState);
+            player.Update(gameTime, keyboardState, mouseState);
+
+            player.Move();
 
             base.Update(gameTime);
         }
