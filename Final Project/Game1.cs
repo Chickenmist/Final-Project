@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Security.Principal;
 
 namespace Final_Project
 {
@@ -42,8 +44,11 @@ namespace Final_Project
 
         Rectangle background;
 
-        Texture2D skyTexture;
-        Texture2D hillsAndTreesTexture;
+        Texture2D backgroundTexture;
+
+        Rectangle floor;
+
+        Texture2D rectangleTexture;
 
         public Game1()
         {
@@ -56,8 +61,13 @@ namespace Final_Project
         {
             // TODO: Add your initialization logic here
 
-            _graphics.PreferredBackBufferWidth = 1920;
-            _graphics.PreferredBackBufferHeight = 1080;
+            _graphics.PreferredBackBufferWidth = 960;
+            _graphics.PreferredBackBufferHeight = 540;
+            _graphics.ApplyChanges();
+
+            background = new Rectangle(0, 0, 960, 540);
+
+            floor = new Rectangle(0, 490, 960, 50);
 
             base.Initialize();
 
@@ -68,7 +78,7 @@ namespace Final_Project
             playerTextures.Add(playerRunAttackTexture);
             playerTextures.Add(playerJumpTexture);
             playerTextures.Add(playerDeathTexture);
-            player = new Player(playerTextures, 50, 50);
+            player = new Player(playerTextures, 50, floor.Y - 75);
         }
 
         protected override void LoadContent()
@@ -87,19 +97,24 @@ namespace Final_Project
             playerJumpTexture = Content.Load<Texture2D>("Skeleton Jump");
             //
 
-            //Background Sprites
-            
+            //Background Sprite
+            backgroundTexture = Content.Load<Texture2D>("Background");
+            //
 
+            rectangleTexture = Content.Load<Texture2D>("rectangle");
         }
 
         protected override void Update(GameTime gameTime)
         {
             keyboardState = Keyboard.GetState();
+            mouseState = Mouse.GetState();
 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
             // TODO: Add your update logic here
+
+            Window.Title = $"{mouseState.X} {mouseState.Y}" ;
 
             player.Update(gameTime, keyboardState, mouseState);
 
@@ -115,6 +130,8 @@ namespace Final_Project
             // TODO: Add your drawing code here
 
             _spriteBatch.Begin();
+
+            _spriteBatch.Draw(backgroundTexture, background, Color.White);
 
             player.Draw(_spriteBatch);
 

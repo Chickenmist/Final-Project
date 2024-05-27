@@ -24,6 +24,8 @@ namespace Final_Project
 
         private bool _facingLeft;
         private bool _facingRight;
+        private bool _jumping;
+        private bool _falling;
 
         public Player(List<Texture2D> textures, int x, int y)
         {
@@ -44,15 +46,45 @@ namespace Final_Project
 
             if (keyboardState.IsKeyDown(Keys.Space))
             {
-                _state = PlayerState.Jump;
+                if (_jumping == false)
+                {
+                    _state = PlayerState.Jump;
 
-                _spriteFrame = new Rectangle(0, 53, 80, 75);
-
-
-
-                VSpeed += 2;
+                    _jumping = true;
+                }
+                else if (_state == PlayerState.Jump)
+                {
+                    _spriteFrame = new Rectangle(0, 53, 80, 75);
+                }
             }
 
+            if (_jumping == true && keyboardState.IsKeyUp(Keys.Space))
+            {
+                _state = PlayerState.Jump;
+                
+                _spriteFrame = new Rectangle(0, 53, 80, 75);
+                
+                if (_location.Y > 330 && _falling == false)
+                {
+                    VSpeed = -5;
+                }
+                else if (_location.Y <= 330 && _falling == false)
+                {
+                    _falling = true;
+                }
+
+                if (_falling == true)
+                {
+                    VSpeed = 5;
+
+                    if (_location.Bottom >= 490)
+                    {
+                        VSpeed = 0;
+                        _falling = false;
+                        _jumping = false;
+                    }
+                }
+            }
 
             if (keyboardState.IsKeyDown(Keys.A) && keyboardState.IsKeyDown(Keys.LeftShift)) //Running left
             {
@@ -73,7 +105,9 @@ namespace Final_Project
                 _facingLeft = true;
                 _facingRight = false;
 
-                if (_state != PlayerState.Attack || _state != PlayerState.DashAttack || _state != PlayerState.Jump || _state != PlayerState.Dead)
+                HSpeed = -4.5f;
+
+                if (_state != PlayerState.Attack && _state != PlayerState.DashAttack && _state != PlayerState.Jump && _state != PlayerState.Dead)
                 {
                     _state = PlayerState.Walk;
                 }
@@ -128,7 +162,9 @@ namespace Final_Project
                 _facingRight = true;
                 _facingLeft = false;
 
-                if (_state != PlayerState.Attack || _state != PlayerState.DashAttack || _state != PlayerState.Jump || _state != PlayerState.Dead)
+                HSpeed = 4.5f;
+
+                if (_state != PlayerState.Attack && _state != PlayerState.DashAttack && _state != PlayerState.Jump && _state != PlayerState.Dead)
                 {
                     _state = PlayerState.Walk;
                 }
@@ -181,6 +217,9 @@ namespace Final_Project
             
             if (_state == PlayerState.Idle)
             {
+
+                HSpeed = 0;
+
                 if (_seconds >= 0.1)
                 {
                     if (_frame == 0)
