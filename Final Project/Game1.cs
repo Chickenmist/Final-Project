@@ -30,7 +30,7 @@ namespace Final_Project
 
         KeyboardState keyboardState;
         MouseState mouseState;
-        PlayerState playerState;
+        //PlayerState playerState;
 
         List<Texture2D> playerTextures = new List<Texture2D>();
         
@@ -114,11 +114,9 @@ namespace Final_Project
 
             // TODO: Add your update logic here
 
-            Window.Title = $"{mouseState.X} {mouseState.Y}" ;
+            Window.Title = $"{mouseState.X} {mouseState.Y}";
 
             player.Update(gameTime, keyboardState, mouseState);
-
-            player.Move();
 
             base.Update(gameTime);
         }
