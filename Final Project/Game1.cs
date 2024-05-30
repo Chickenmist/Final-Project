@@ -37,7 +37,6 @@ namespace Final_Project
         Texture2D playerIdleTexture;
         Texture2D playerWalkTexture;
         Texture2D playerRunTexture;
-        Texture2D playerRunAttackTexture;
         Texture2D playerAttackTexture;
         Texture2D playerDeathTexture;
         Texture2D playerJumpTexture;
@@ -75,7 +74,6 @@ namespace Final_Project
             playerTextures.Add(playerWalkTexture);
             playerTextures.Add(playerRunTexture);
             playerTextures.Add(playerAttackTexture);
-            playerTextures.Add(playerRunAttackTexture);
             playerTextures.Add(playerJumpTexture);
             playerTextures.Add(playerDeathTexture);
             player = new Player(playerTextures, 50, floor.Y - 75);
@@ -92,7 +90,6 @@ namespace Final_Project
             playerIdleTexture = Content.Load<Texture2D>("Skeleton Idle");
             playerDeathTexture = Content.Load<Texture2D>("Skeleton Dead");
             playerRunTexture = Content.Load<Texture2D>("Skeleton Run");
-            playerRunAttackTexture = Content.Load<Texture2D>("Skeleton Run Attack");
             playerWalkTexture = Content.Load<Texture2D>("Skeleton Walk");
             playerJumpTexture = Content.Load<Texture2D>("Skeleton Jump");
             //
@@ -132,6 +129,8 @@ namespace Final_Project
             _spriteBatch.Draw(backgroundTexture, background, Color.White);
 
             player.Draw(_spriteBatch);
+            _spriteBatch.Draw(rectangleTexture, player.playerHurtbox, new Color(Color.Black, 0.5f));
+            _spriteBatch.Draw(rectangleTexture, player.playerHitbox, new Color(Color.Red, 0.5f));
 
             _spriteBatch.End();
 

@@ -14,13 +14,15 @@ namespace Final_Project
         private List<Texture2D> _textures;
         private Rectangle _location;
         private Vector2 _speed;
-        private float _seconds;
+        private float _spriteSeconds;
+        private float _attackSeconds;
+        private float _attackCoolDown;
 
         private Rectangle _spriteFrame;
         private float _frame;
 
-        private Rectangle _hitbox; //damage dealing area
-        private Rectangle _hurtbox; //damageable area
+        public Rectangle playerHitbox; //damage dealing area
+        public Rectangle playerHurtbox; //damageable area
 
         PlayerState _state;
 
@@ -28,6 +30,7 @@ namespace Final_Project
         private bool _facingRight = true;
         private bool _jumping;
         private bool _falling;
+        private bool _attacking = false;
 
         public Player(List<Texture2D> textures, int x, int y)
         {
@@ -39,16 +42,14 @@ namespace Final_Project
 
         public void Update(GameTime gameTime, KeyboardState keyboardState, MouseState mouseState)
         {
-            _hurtbox = new Rectangle(_location.X, _location.Y, 80, 75);
-
-             _seconds += (float)gameTime.ElapsedGameTime.TotalSeconds;
-           
-            if (_state != PlayerState.Idle)
+            if (_state != PlayerState.Attack || _state != PlayerState.Dead)
             {
                 _state = PlayerState.Idle;
             }
 
-            if (keyboardState.IsKeyDown(Keys.Space)) //Jump
+
+            //Jumping
+            if (keyboardState.IsKeyDown(Keys.Space))
             {
                 HSpeed = 0;
 
@@ -110,7 +111,41 @@ namespace Final_Project
                     }
                 }
             }
+            //
 
+            //Attacking
+            if (mouseState.LeftButton == ButtonState.Pressed && _attacking == false && _attackCoolDown == 0) //Attack started
+            {
+                _state = PlayerState.Attack;
+                _frame = 0;
+                _spriteSeconds = 0;
+                _attacking = true;
+                _attackCoolDown = 1.5f;
+            }
+
+            if (_attacking == true) //Attacking
+            {
+                _state = PlayerState.Attack;
+                
+                _attackSeconds += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                if (_attackSeconds > 0.4)
+                {
+                    _attacking = false;
+                    _attackSeconds = 0;
+                }
+            }
+
+            if (_attackCoolDown > 0)
+            {
+                _attackCoolDown -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
+            else if (_attackCoolDown <= 0)
+            {
+                _attackCoolDown = 0;
+            }
+            //
+
+            //Movement
             if (keyboardState.IsKeyDown(Keys.A) && keyboardState.IsKeyDown(Keys.LeftShift)) //Running left
             {
                 _facingLeft = true;
@@ -118,7 +153,7 @@ namespace Final_Project
 
                 HSpeed = -8.5f;
 
-                if (_state != PlayerState.Attack && _state != PlayerState.DashAttack && _state != PlayerState.Jump && _state != PlayerState.Dead)
+                if (_state != PlayerState.Attack && _state != PlayerState.Jump && _state != PlayerState.Dead)
                 {
                     _state = PlayerState.Run;
                 }
@@ -130,7 +165,7 @@ namespace Final_Project
 
                 HSpeed = 8.5f;
 
-                if (_state != PlayerState.Attack && _state != PlayerState.DashAttack && _state != PlayerState.Jump && _state != PlayerState.Dead)
+                if (_state != PlayerState.Attack && _state != PlayerState.Jump && _state != PlayerState.Dead)
                 {
                     _state = PlayerState.Run;
                 }
@@ -142,7 +177,7 @@ namespace Final_Project
 
                 HSpeed = -4.5f;
 
-                if (_state != PlayerState.Attack && _state != PlayerState.DashAttack && _state != PlayerState.Jump && _state != PlayerState.Dead)
+                if (_state != PlayerState.Attack && _state != PlayerState.Jump && _state != PlayerState.Dead)
                 {
                     _state = PlayerState.Walk;
                 }
@@ -154,7 +189,7 @@ namespace Final_Project
 
                 HSpeed = 4.5f;
 
-                if (_state != PlayerState.Attack && _state != PlayerState.DashAttack && _state != PlayerState.Jump && _state != PlayerState.Dead)
+                if (_state != PlayerState.Attack && _state != PlayerState.Jump && _state != PlayerState.Dead)
                 {
                     _state = PlayerState.Walk;
                 }
@@ -166,14 +201,20 @@ namespace Final_Project
             }
             
             Move();
+            GenerateBoxes();
+            //
+
+            //Animation
+            _spriteSeconds += (float)gameTime.ElapsedGameTime.TotalSeconds;
             AnimateFrame();
+            //
         }
 
         private void AnimateFrame()
         {
             if (_state == PlayerState.Walk) //Walk cycle
             {
-                if (_seconds >= 0.08)
+                if (_spriteSeconds >= 0.08)
                 {
                     if (_frame == 0)
                     {
@@ -212,12 +253,12 @@ namespace Final_Project
                         _spriteFrame = new Rectangle(814, 53, 80, 75);
                         _frame = 0;
                     }
-                    _seconds = 0;
+                    _spriteSeconds = 0;
                 }
             }
             else if (_state == PlayerState.Idle) //Idle cycle
             {
-                if (_seconds >= 0.1)
+                if (_spriteSeconds >= 0.1)
                 {
                     if (_frame == 0)
                     {
@@ -256,7 +297,7 @@ namespace Final_Project
                         _spriteFrame = new Rectangle(806, 53, 80, 75);
                         _frame = 0;
                     }
-                    _seconds = 0;
+                    _spriteSeconds = 0;
                 }
             }
             else if (_state == PlayerState.Jump) //Jump frame
@@ -265,7 +306,7 @@ namespace Final_Project
             }
             else if (_state == PlayerState.Run) //Run cycle
             {
-                if (_seconds >= 0.07)
+                if (_spriteSeconds >= 0.07)
                 {
                     if (_frame == 0)
                     {
@@ -309,18 +350,38 @@ namespace Final_Project
                         _spriteFrame = new Rectangle(931, 53, 80, 75);
                         _frame = 0;
                     }
-                    _seconds = 0;
+                    _spriteSeconds = 0;
                 }
             }
-            else if (_state == PlayerState.Attack)
+            else if (_state == PlayerState.Attack) //Attack cycle
             {
+                if (_spriteSeconds >= 0.1)
+                {
+                    if (_frame == 0)
+                    {
+                        _spriteFrame = new Rectangle(25, 53, 80, 75);
 
+                        _frame++;
+                    }
+                    else if (_frame == 1)
+                    {
+                        _spriteFrame = new Rectangle(159, 53, 80, 75);
+
+                        _frame++;
+                    }
+                    else if (_frame == 2)
+                    {
+                        _spriteFrame = new Rectangle(296, 53, 80, 75);
+                        _frame++;
+                    }
+                    else if (_frame == 3)
+                    {
+                        _spriteFrame = new Rectangle(424, 53, 80, 75);
+                        _frame = 0;
+                    }
+                    _spriteSeconds = 0;
+                }
             }
-        }
-
-        public bool Collide(Rectangle item)
-        {
-            return _hurtbox.Intersects(item);
         }
 
         public PlayerState State 
@@ -345,6 +406,39 @@ namespace Final_Project
         {
             _location.X += (int)_speed.X;
             _location.Y += (int)_speed.Y;
+        }
+
+        private void GenerateBoxes()
+        {
+            //Hurtbox
+            if (_state != PlayerState.Attack)
+            {
+                playerHurtbox = new Rectangle(_location.X, _location.Y, _location.Width, _location.Height);
+            }
+            else if (_state == PlayerState.Attack && _facingRight)
+            {
+                playerHurtbox = new Rectangle(_location.X, _location.Y, _location.Width - 40, _location.Height);
+            }
+            else if (_state == PlayerState.Attack && _facingLeft)
+            {
+                playerHurtbox = new Rectangle(_location.X + 40, _location.Y, _location.Width - 40, _location.Height);
+            }
+            //
+
+            //Hitbox
+            if (_state != PlayerState.Attack)
+            {
+                playerHitbox = Rectangle.Empty;
+            }
+            else if (_state == PlayerState.Attack && _facingRight)
+            {
+                playerHitbox = new Rectangle(playerHurtbox.Right, _location.Y, 40, _location.Height);
+            }
+            else if (_state == PlayerState.Attack && _facingLeft)
+            {
+                playerHitbox = new Rectangle(playerHurtbox.Left - 40, _location.Y, 40, _location.Height);
+            }
+            //
         }
 
         public void Draw(SpriteBatch spriteBatch) 
