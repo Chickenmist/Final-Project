@@ -56,13 +56,13 @@ namespace Final_Project
 
                 if (_jumping == false)
                 {
-                    _state = PlayerState.Jump;
+                    _state = PlayerState.Jumping;
 
                     _jumping = true;
                 }
                 else if (_jumping) //Jump is held
                 {
-                    _state = PlayerState.Jump;
+                    _state = PlayerState.Jumping;
 
                     if (_location.Y > 230 && _falling == false)
                     {
@@ -89,7 +89,7 @@ namespace Final_Project
 
             if (_jumping == true && keyboardState.IsKeyUp(Keys.Space)) //Jump is not held
             {
-                _state = PlayerState.Jump;
+                _state = PlayerState.Jumping;
 
                 if (_location.Y > 320 && _falling == false)
                 {
@@ -119,7 +119,6 @@ namespace Final_Project
             {
                 _state = PlayerState.Attack;
                 _frame = 0;
-                _spriteSeconds = 0;
                 _attacking = true;
                 _attackCoolDown = 1.5f;
             }
@@ -154,7 +153,7 @@ namespace Final_Project
 
                 HSpeed = -8.5f;
 
-                if (_state != PlayerState.Attack && _state != PlayerState.Jump && _state != PlayerState.Dead)
+                if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead)
                 {
                     _state = PlayerState.Run;
                 }
@@ -166,7 +165,7 @@ namespace Final_Project
 
                 HSpeed = 8.5f;
 
-                if (_state != PlayerState.Attack && _state != PlayerState.Jump && _state != PlayerState.Dead)
+                if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead)
                 {
                     _state = PlayerState.Run;
                 }
@@ -178,7 +177,7 @@ namespace Final_Project
 
                 HSpeed = -4.5f;
 
-                if (_state != PlayerState.Attack && _state != PlayerState.Jump && _state != PlayerState.Dead)
+                if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead)
                 {
                     _state = PlayerState.Walk;
                 }
@@ -190,7 +189,7 @@ namespace Final_Project
 
                 HSpeed = 4.5f;
 
-                if (_state != PlayerState.Attack && _state != PlayerState.Jump && _state != PlayerState.Dead)
+                if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead)
                 {
                     _state = PlayerState.Walk;
                 }
@@ -301,9 +300,9 @@ namespace Final_Project
                     _spriteSeconds = 0;
                 }
             }
-            else if (_state == PlayerState.Jump) //Jump frame
+            else if (_state == PlayerState.Jumping) //Jump frame
             {
-                _spriteFrame = new Rectangle(45, 62, 80, 75);
+                _spriteFrame = new Rectangle(45, 53, 80, 75);
             }
             else if (_state == PlayerState.Run) //Run cycle
             {

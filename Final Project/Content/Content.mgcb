@@ -73,7 +73,7 @@
 /processorParam:TextureFormat=Color
 /build:Skeleton Idle.png
 
-#begin Skeleton Jump.png
+#begin Skeleton Jumping.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -83,7 +83,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Skeleton Jump.png
+/build:Skeleton Jumping.png
 
 #begin Skeleton Run.png
 /importer:TextureImporter

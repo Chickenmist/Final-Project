@@ -16,8 +16,7 @@ namespace Final_Project
         Walk,
         Run,
         Attack,
-        DashAttack,
-        Jump,
+        Jumping,
         Dead
     }
 
@@ -91,7 +90,7 @@ namespace Final_Project
             playerDeathTexture = Content.Load<Texture2D>("Skeleton Dead");
             playerRunTexture = Content.Load<Texture2D>("Skeleton Run");
             playerWalkTexture = Content.Load<Texture2D>("Skeleton Walk");
-            playerJumpTexture = Content.Load<Texture2D>("Skeleton Jump");
+            playerJumpTexture = Content.Load<Texture2D>("Skeleton Jumping");
             //
 
             //Background Sprite
@@ -129,8 +128,8 @@ namespace Final_Project
             _spriteBatch.Draw(backgroundTexture, background, Color.White);
 
             player.Draw(_spriteBatch);
-            _spriteBatch.Draw(rectangleTexture, player.playerHurtbox, new Color(Color.Black, 0.5f));
-            _spriteBatch.Draw(rectangleTexture, player.playerHitbox, new Color(Color.Red, 0.5f));
+            //_spriteBatch.Draw(rectangleTexture, player.playerHurtbox, new Color(Color.Black, 0.5f));
+            //_spriteBatch.Draw(rectangleTexture, player.playerHitbox, new Color(Color.Red, 0.5f));
 
             _spriteBatch.End();
 
