@@ -21,6 +21,8 @@ namespace Final_Project
         private Rectangle _spriteFrame;
         private float _frame;
 
+        private float _health;
+
         public Rectangle playerHitbox; //damage dealing area
         public Rectangle playerHurtbox; //damageable area
 
@@ -46,7 +48,6 @@ namespace Final_Project
             {
                 _state = PlayerState.Idle;
             }
-
 
             //Jumping
             if (keyboardState.IsKeyDown(Keys.Space))
@@ -302,7 +303,7 @@ namespace Final_Project
             }
             else if (_state == PlayerState.Jump) //Jump frame
             {
-                _spriteFrame = new Rectangle(0, 53, 80, 75);
+                _spriteFrame = new Rectangle(45, 62, 80, 75);
             }
             else if (_state == PlayerState.Run) //Run cycle
             {
@@ -406,14 +407,43 @@ namespace Final_Project
         {
             _location.X += (int)_speed.X;
             _location.Y += (int)_speed.Y;
-        }
 
+            if (_facingLeft)
+            {
+                if (_location.Left < -40)
+                {
+                    _location.X = -40;
+                }
+                else if (_location.Right > 960)
+                {
+                    _location.X = 960 - _location.Width;
+                }
+            }
+            else if (_facingRight)
+            {
+                if (_location.Left < 0)
+                {
+                    _location.X = 0;
+                }
+                else if (_location.Right > 1000)
+                {
+                    _location.X = 1000 - _location.Width;
+                }
+            }
+        }
         private void GenerateBoxes()
         {
             //Hurtbox
             if (_state != PlayerState.Attack)
             {
-                playerHurtbox = new Rectangle(_location.X, _location.Y, _location.Width, _location.Height);
+                if (_facingLeft)
+                {
+                    playerHurtbox = new Rectangle(_location.X + 40, _location.Y, _location.Width - 40, _location.Height);
+                }
+                else if (_facingRight)
+                {
+                    playerHurtbox = new Rectangle(_location.X, _location.Y, _location.Width - 40, _location.Height);
+                }
             }
             else if (_state == PlayerState.Attack && _facingRight)
             {
