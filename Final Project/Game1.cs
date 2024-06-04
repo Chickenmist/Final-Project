@@ -20,17 +20,50 @@ namespace Final_Project
         Dead
     }
 
+    enum BossState
+    {
+        GroundIdle,
+        SlashOne,
+        Dash,
+        LightningBolt,
+        SlashTwo,
+
+        Jump,
+        Hurt,
+        
+        FlyingIdle,
+        HorizontalBeam,
+        VerticalBeam,
+
+        Dead
+    }
+
+    enum Difficulty
+    {
+        Easy,
+        Normal,
+        Hard,
+        HellAndHell
+    }
+
     public class Game1 : Game
     {
         Player player;
+        Boss boss;
+
+        public int playerHealth;
+        public int bossHealth;
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+
+        int difficulty;
 
         KeyboardState keyboardState;
         MouseState mouseState;
         //PlayerState playerState;
 
+        //Player Textures
         List<Texture2D> playerTextures = new List<Texture2D>();
         
         Texture2D playerIdleTexture;
@@ -39,6 +72,12 @@ namespace Final_Project
         Texture2D playerAttackTexture;
         Texture2D playerDeathTexture;
         Texture2D playerJumpTexture;
+        //
+
+        //Boss Tetxures
+        List<Texture2D> bossTextures = new List<Texture2D>();
+
+        //
 
         Rectangle background;
 
@@ -67,8 +106,11 @@ namespace Final_Project
 
             floor = new Rectangle(0, 490, 960, 50);
 
-            base.Initialize();
+            bossHealth = 100;
 
+            base.Initialize();
+            
+            //Player
             playerTextures.Add(playerIdleTexture);
             playerTextures.Add(playerWalkTexture);
             playerTextures.Add(playerRunTexture);
@@ -76,6 +118,11 @@ namespace Final_Project
             playerTextures.Add(playerJumpTexture);
             playerTextures.Add(playerDeathTexture);
             player = new Player(playerTextures, 50, floor.Y - 75);
+            //
+
+            //Boss
+
+            boss = new Boss(bossTextures, 40, 40);
         }
 
         protected override void LoadContent()
@@ -91,6 +138,10 @@ namespace Final_Project
             playerRunTexture = Content.Load<Texture2D>("Skeleton Run");
             playerWalkTexture = Content.Load<Texture2D>("Skeleton Walk");
             playerJumpTexture = Content.Load<Texture2D>("Skeleton Jumping");
+            //
+
+            //Boss Sprites
+
             //
 
             //Background Sprite
@@ -113,6 +164,8 @@ namespace Final_Project
             Window.Title = $"{mouseState.X} {mouseState.Y}";
 
             player.Update(gameTime, keyboardState, mouseState);
+
+
 
             base.Update(gameTime);
         }

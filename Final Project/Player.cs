@@ -41,7 +41,7 @@ namespace Final_Project
             _speed = new Vector2();
             _state = PlayerState.Idle;
         }
-
+        
         public void Update(GameTime gameTime, KeyboardState keyboardState, MouseState mouseState)
         {
             if (_state != PlayerState.Attack || _state != PlayerState.Dead)
@@ -52,8 +52,6 @@ namespace Final_Project
             //Jumping
             if (keyboardState.IsKeyDown(Keys.Space))
             {
-                HSpeed = 0;
-
                 if (_jumping == false)
                 {
                     _state = PlayerState.Jumping;
@@ -66,7 +64,7 @@ namespace Final_Project
 
                     if (_location.Y > 230 && _falling == false)
                     {
-                        VSpeed = -6;
+                        _speed.Y = -6;
                     }
                     else if (_location.Y <= 230 && _falling == false || keyboardState.IsKeyUp(Keys.Space) && _falling == false)
                     {
@@ -75,11 +73,11 @@ namespace Final_Project
 
                     if (_falling == true)
                     {
-                        VSpeed = 6;
+                        _speed.Y = 6;
 
                         if (_location.Bottom >= 490)
                         {
-                            VSpeed = 0;
+                            _speed.Y = 0;
                             _falling = false;
                             _jumping = false;
                         }
@@ -93,7 +91,7 @@ namespace Final_Project
 
                 if (_location.Y > 320 && _falling == false)
                 {
-                    VSpeed = -6;
+                    _speed.Y = -6;
                 }
                 else if (_location.Y <= 320 && _falling == false)
                 {
@@ -102,11 +100,11 @@ namespace Final_Project
 
                 if (_falling == true)
                 {
-                    VSpeed = 6;
+                    _speed.Y = 6;
 
                     if (_location.Bottom >= 490)
                     {
-                        VSpeed = 0;
+                        _speed.Y = 0;
                         _falling = false;
                         _jumping = false;
                     }
@@ -151,7 +149,7 @@ namespace Final_Project
                 _facingLeft = true;
                 _facingRight = false;
 
-                HSpeed = -8.5f;
+                _speed.X = -8.5f;
 
                 if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead)
                 {
@@ -163,7 +161,7 @@ namespace Final_Project
                 _facingRight = true;
                 _facingLeft = false;
 
-                HSpeed = 8.5f;
+                _speed.X = 8.5f;
 
                 if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead)
                 {
@@ -175,7 +173,7 @@ namespace Final_Project
                 _facingLeft = true;
                 _facingRight = false;
 
-                HSpeed = -4.5f;
+                _speed.X = -4.5f;
 
                 if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead)
                 {
@@ -187,7 +185,7 @@ namespace Final_Project
                 _facingRight = true;
                 _facingLeft = false;
 
-                HSpeed = 4.5f;
+                _speed.X = 4.5f;
 
                 if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead)
                 {
@@ -197,7 +195,7 @@ namespace Final_Project
             
             if (_state == PlayerState.Idle)
             {
-                HSpeed = 0;
+                _speed.X = 0;
             }
             
             Move();
@@ -388,18 +386,6 @@ namespace Final_Project
         { 
             get { return _state; } 
             set { _state = value; }
-        }
-
-        public float HSpeed
-        {
-            get { return _speed.X; }
-            set { _speed.X = value; }
-        }
-
-        public float VSpeed
-        {
-            get { return _speed.Y; }
-            set { _speed.Y = value; }
         }
 
         public void Move()
