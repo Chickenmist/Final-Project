@@ -51,9 +51,6 @@ namespace Final_Project
         Player player;
         Boss boss;
 
-        public int playerHealth;
-        public int bossHealth;
-
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
@@ -74,9 +71,12 @@ namespace Final_Project
         Texture2D playerJumpTexture;
         //
 
+        public Vector2 playerPoint;
+
         //Boss Tetxures
         List<Texture2D> bossTextures = new List<Texture2D>();
 
+        Texture2D bossPhaseOneIdleTexture;
         //
 
         Rectangle background;
@@ -106,8 +106,6 @@ namespace Final_Project
 
             floor = new Rectangle(0, 490, 960, 50);
 
-            bossHealth = 100;
-
             base.Initialize();
             
             //Player
@@ -121,8 +119,10 @@ namespace Final_Project
             //
 
             //Boss
+            bossTextures.Add(bossPhaseOneIdleTexture);
 
-            boss = new Boss(bossTextures, 40, 40);
+            boss = new Boss(bossTextures,  40, 40);
+            //
         }
 
         protected override void LoadContent()
@@ -141,7 +141,7 @@ namespace Final_Project
             //
 
             //Boss Sprites
-
+            bossPhaseOneIdleTexture = Content.Load<Texture2D>("Boss Ground Idle");
             //
 
             //Background Sprite
@@ -165,7 +165,9 @@ namespace Final_Project
 
             player.Update(gameTime, keyboardState, mouseState);
 
+            playerPoint = new Vector2(player.playerHurtbox.X, player.playerHurtbox.Y);
 
+            boss.Update(gameTime, player);
 
             base.Update(gameTime);
         }
@@ -183,6 +185,8 @@ namespace Final_Project
             player.Draw(_spriteBatch);
             //_spriteBatch.Draw(rectangleTexture, player.playerHurtbox, new Color(Color.Black, 0.5f));
             //_spriteBatch.Draw(rectangleTexture, player.playerHitbox, new Color(Color.Red, 0.5f));
+
+            boss.Draw(_spriteBatch);
 
             _spriteBatch.End();
 

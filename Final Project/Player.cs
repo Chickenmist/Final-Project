@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Final_Project
 {
-    internal class Player
+    public class Player
     {
         private List<Texture2D> _textures;
         private Rectangle _location;
@@ -20,8 +20,6 @@ namespace Final_Project
 
         private Rectangle _spriteFrame;
         private float _frame;
-
-        private float _health;
 
         public Rectangle playerHitbox; //damage dealing area
         public Rectangle playerHurtbox; //damageable area
@@ -256,7 +254,7 @@ namespace Final_Project
             }
             else if (_state == PlayerState.Idle) //Idle cycle
             {
-                if (_spriteSeconds >= 0.1)
+                if (_spriteSeconds >= 0.09)
                 {
                     if (_frame == 0)
                     {
@@ -382,13 +380,7 @@ namespace Final_Project
             }
         }
 
-        public PlayerState State 
-        { 
-            get { return _state; } 
-            set { _state = value; }
-        }
-
-        public void Move()
+        private void Move()
         {
             _location.X += (int)_speed.X;
             _location.Y += (int)_speed.Y;

@@ -8,15 +8,14 @@ using System.Threading.Tasks;
 
 namespace Final_Project
 {
-    internal class Boss
+    public class Boss
     {
-        Game1 game;
-
         private List<Texture2D> _textures;
         private Rectangle _location;
         private Vector2 _speed;
 
         public Rectangle bossHitbox;
+        public Rectangle bossHurtbox;
 
         private Random _random = new Random();
         private int _bossAction;
@@ -27,35 +26,46 @@ namespace Final_Project
 
         private bool _active;
 
-        private bool _facingLeft = true;
+        private bool _facingLeft = true; 
         private int _frame = 0;
+        private float _frameTime = 0;
         private Rectangle _spriteFrame;
 
         private float _coolDown;
 
-        public Boss(List<Texture2D> textures, int x, int y)
+        public Boss(List<Texture2D> textures,int x, int y)
         {
             _textures = textures;
             _location = new Rectangle(x, y, 119, 85);
             _speed = new Vector2();
         }
 
-        public void Update(GameTime gameTime)
+        public void Update(GameTime gameTime, Player player)
         {
-            if (game.bossHealth > 50) //Phase One
+            _bossAction = 0;
+
+            if (player.playerHurtbox.X < _location.X)
+            {
+                _facingLeft = true;
+            }
+            else if (player.playerHurtbox.X > _location.X)
+            {
+                _facingLeft = false;
+            }
+
+            if (_health > 50) //Phase One
             {
                 if (_active == false && _coolDown == 0)
                 {
-                    _bossAction = _random.Next(1, 4);
+                    //_bossAction = _random.Next(1, 4);
 
                     if (_bossAction == 1) //Slash attack
                     {
-                        _speed.X = 4;
                         _state = BossState.SlashOne;
                     }
                     else if (_bossAction == 2) //Dash
                     {
-                        _speed.X = 9;
+                        _state = BossState.Dash;
                     }
                     else if (_bossAction == 3) //Lighting blast
                     {
@@ -71,11 +81,11 @@ namespace Final_Project
                 }
 
             }
-            else if (game.bossHealth <= 50) //Phase Two
+            else if (_health <= 50) //Phase Two
             {
 
             }
-            else if (game.bossHealth == 0) //Dead
+            else if (_health == 0) //Dead
             {
 
             }
@@ -88,11 +98,12 @@ namespace Final_Project
 
             Move();
 
+            _frameTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
             AnimateFrame();
         }
 
 
-        public void Move()
+        private void Move()
         {
             _location.X += (int)_speed.X;
             _location.Y += (int)_speed.Y;
@@ -102,7 +113,46 @@ namespace Final_Project
         {
             if (_state == BossState.GroundIdle) //Phase one idle (grounded idle)
             {
+                if (_frameTime >= 0.1)
+                {
+                    if(_frame == 0)
+                    {
+                        _spriteFrame = new Rectangle(39, 43, 119, 85);
+                        _frame++;
+                    }
+                    else if(_frame == 1)
+                    {
+                        _spriteFrame = new Rectangle(166, 43, 119, 85);
+                        _frame++;
+                    }
+                    else if (_frame == 2)
+                    {
+                        _spriteFrame = new Rectangle(291, 43, 119, 85);
+                        _frame++;
+                    }
+                    else if (_frame == 3)
+                    {
+                        _spriteFrame = new Rectangle(418, 43, 119, 85);
+                        _frame++;
+                    }
+                    else if (_frame == 4)
+                    {
+                        _spriteFrame = new Rectangle(546, 43, 119, 85);
+                        _frame++;
+                    }
+                    else if (_frame == 5)
+                    {
+                        _spriteFrame = new Rectangle(672, 43, 119, 85);
+                        _frame++;
+                    }
+                    else if (_frame == 6)
+                    {
+                        _spriteFrame = new Rectangle(802, 43, 119, 85);
+                        _frame = 0;
+                    }
 
+                    _frameTime = 0;
+                }
             }
             else if(_state == BossState.SlashOne) //Slash one
             {
@@ -128,7 +178,7 @@ namespace Final_Project
             {
 
             }
-            else if (_state == BossState.HorizontalBeam) // Horizontal beam
+            else if (_state == BossState.HorizontalBeam) //Horizontal beam
             {
 
             }
