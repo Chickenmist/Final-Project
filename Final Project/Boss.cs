@@ -38,6 +38,7 @@ namespace Final_Project
             _textures = textures;
             _location = new Rectangle(x, y, 119, 85);
             _speed = new Vector2();
+            _health = 100;
         }
 
         public void Update(GameTime gameTime, Player player)
@@ -59,9 +60,12 @@ namespace Final_Project
                 {
                     //_bossAction = _random.Next(1, 4);
 
+                    _bossAction = 1;
+
                     if (_bossAction == 1) //Slash attack
                     {
                         _state = BossState.SlashOne;
+                        _bossAction = 0;
                     }
                     else if (_bossAction == 2) //Dash
                     {
@@ -69,14 +73,29 @@ namespace Final_Project
                     }
                     else if (_bossAction == 3) //Lighting blast
                     {
-
+                        _state = BossState.LightningBolt;
                     }
 
                     _active = true;
                 }
-                else if(_active == false && _coolDown > 0) 
+
+                if (_state == BossState.SlashOne || _state == BossState.SlashTwo)
                 {
-                    _bossAction = 0;
+                    if (_facingLeft)
+                    {
+                        _speed.X = -4;
+                    }
+                    else
+                    {
+                        _speed.X = 4;
+                    }
+                }
+                else if (_state == BossState.Dash)
+                {
+
+                }
+                else if (_state == BossState.LightningBolt || _state == BossState.GroundIdle)
+                {
                     _speed.X = 0;
                 }
 
@@ -90,13 +109,25 @@ namespace Final_Project
 
             }
 
-            if (_coolDown <= 0)
+            Move();
+
+            if (_coolDown > 0)
             {
-                _active = false;
+                if (_health > 50)
+                {
+                    _state = BossState.GroundIdle;
+                }
+                else if (_health <= 50)
+                {
+
+                }
+                
+                _coolDown -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
+            else if (_coolDown <= 0)
+            {
                 _coolDown = 0;
             }
-
-            Move();
 
             _frameTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
             AnimateFrame();
@@ -117,37 +148,37 @@ namespace Final_Project
                 {
                     if(_frame == 0)
                     {
-                        _spriteFrame = new Rectangle(39, 43, 119, 85);
+                        _spriteFrame = new Rectangle(13, 43, 119, 85);
                         _frame++;
                     }
                     else if(_frame == 1)
                     {
-                        _spriteFrame = new Rectangle(166, 43, 119, 85);
+                        _spriteFrame = new Rectangle(140, 43, 119, 85);
                         _frame++;
                     }
                     else if (_frame == 2)
                     {
-                        _spriteFrame = new Rectangle(291, 43, 119, 85);
+                        _spriteFrame = new Rectangle(265, 43, 119, 85);
                         _frame++;
                     }
                     else if (_frame == 3)
                     {
-                        _spriteFrame = new Rectangle(418, 43, 119, 85);
+                        _spriteFrame = new Rectangle(392, 43, 119, 85);
                         _frame++;
                     }
                     else if (_frame == 4)
                     {
-                        _spriteFrame = new Rectangle(546, 43, 119, 85);
+                        _spriteFrame = new Rectangle(520, 43, 119, 85);
                         _frame++;
                     }
                     else if (_frame == 5)
                     {
-                        _spriteFrame = new Rectangle(672, 43, 119, 85);
+                        _spriteFrame = new Rectangle(646, 43, 119, 85);
                         _frame++;
                     }
                     else if (_frame == 6)
                     {
-                        _spriteFrame = new Rectangle(802, 43, 119, 85);
+                        _spriteFrame = new Rectangle(776, 43, 119, 85);
                         _frame = 0;
                     }
 
@@ -156,11 +187,94 @@ namespace Final_Project
             }
             else if(_state == BossState.SlashOne) //Slash one
             {
-                
-            }
-            else if(_state == BossState.SlashTwo) //slash two
-            {
+                if (_frame == 0)
+                {
+                    _spriteFrame = new Rectangle(24, 43, 119, 85);
+                }
+                else if (_frame == 1)
+                {
+                    _spriteFrame = new Rectangle(151, 43, 119, 85);
+                }
+                else if (_frame == 2)
+                {
+                    _spriteFrame = new Rectangle(296, 43, 119, 85);
+                }
+                else if (_frame == 3)
+                {
+                    _spriteFrame = new Rectangle(425, 43, 119, 85);
+                }
+                else if (_frame == 4)
+                {
+                    _spriteFrame = new Rectangle(551, 43, 119, 85);
+                }
+                else if (_frame == 5)
+                {
+                    _spriteFrame = new Rectangle(681, 43, 119, 85);
+                }
+                else if (_frame == 6)
+                {
+                    _spriteFrame = new Rectangle(805, 43, 119, 85);
+                }
+                else if (_frame == 7)
+                {
+                    _spriteFrame = new Rectangle(933, 43, 119, 85);
+                }
+                else if (_frame == 8)
+                {
+                    _spriteFrame = new Rectangle(1062, 43, 119, 85);
+                }
+                else if (_frame == 9)
+                {
+                    _spriteFrame = new Rectangle(1189, 43, 119, 85);
+                    _frame = 0;
+                    _state = BossState.SlashTwo;
+                }
 
+                if (_frameTime >= 0.1)
+                {
+                    if (_frame == 9)
+                    {
+                        _frame = 0;
+                    }
+                    else
+                    {
+                        _frame++;
+                    }
+                    _frameTime = 0;
+                }
+            }
+            else if(_state == BossState.SlashTwo) //Slash two
+            {
+                if (_frame == 0)
+                {
+                    _spriteFrame = new Rectangle(21, 43, 119, 85);
+                }
+                else if (_frame == 1)
+                {
+                    _spriteFrame = new Rectangle(150, 43, 106, 85);
+                }
+                else if (_frame == 2)
+                {
+                    _spriteFrame = new Rectangle(256, 43, 119, 85);
+                }
+                else if (_frame == 3)
+                {
+                    _spriteFrame = new Rectangle(400, 43, 119, 85);
+                }
+                if (_frameTime >= 0.15)
+                {
+                    if (_frame == 3)
+                    {
+                        _frame = 0;
+                        _coolDown = 2;
+                        _active = false;
+                    }
+                    else
+                    {
+                        _frame++;
+                    }
+                    _frameTime = 0;
+                }
             }
             else if(_state == BossState.Dash) //Dash
             {
@@ -190,7 +304,14 @@ namespace Final_Project
 
         private void GenerateBoxes()
         {
+            if (_facingLeft)
+            {
 
+            }
+            else
+            {
+
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)

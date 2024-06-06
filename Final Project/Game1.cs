@@ -71,19 +71,21 @@ namespace Final_Project
         Texture2D playerJumpTexture;
         //
 
-        public Vector2 playerPoint;
-
         //Boss Tetxures
         List<Texture2D> bossTextures = new List<Texture2D>();
 
         Texture2D bossPhaseOneIdleTexture;
+        Texture2D bossSlashOneTexture;
+        Texture2D bossSlashTwoTexture;
+        Texture2D bossDashTexture;
+        Texture2D bossLightingAttackTexture;
         //
 
+        //Background and floor
         Rectangle background;
-
         Texture2D backgroundTexture;
-
         Rectangle floor;
+        //
 
         Texture2D rectangleTexture;
 
@@ -120,6 +122,10 @@ namespace Final_Project
 
             //Boss
             bossTextures.Add(bossPhaseOneIdleTexture);
+            bossTextures.Add(bossSlashOneTexture);
+            bossTextures.Add(bossDashTexture);
+            bossTextures.Add(bossLightingAttackTexture);
+            bossTextures.Add(bossSlashTwoTexture);
 
             boss = new Boss(bossTextures,  40, 40);
             //
@@ -142,6 +148,10 @@ namespace Final_Project
 
             //Boss Sprites
             bossPhaseOneIdleTexture = Content.Load<Texture2D>("Boss Ground Idle");
+            bossSlashOneTexture = Content.Load<Texture2D>("Boss Attack 1");
+            bossSlashTwoTexture = Content.Load<Texture2D>("Boss Attack 2");
+            bossDashTexture = Content.Load<Texture2D>("Boss Dash");
+            bossLightingAttackTexture = Content.Load<Texture2D>("Lightning Bolt");
             //
 
             //Background Sprite
@@ -164,8 +174,6 @@ namespace Final_Project
             Window.Title = $"{mouseState.X} {mouseState.Y}";
 
             player.Update(gameTime, keyboardState, mouseState);
-
-            playerPoint = new Vector2(player.playerHurtbox.X, player.playerHurtbox.Y);
 
             boss.Update(gameTime, player);
 

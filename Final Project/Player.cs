@@ -124,9 +124,8 @@ namespace Final_Project
                 _state = PlayerState.Attack;
                 
                 _attackSeconds += (float)gameTime.ElapsedGameTime.TotalSeconds;
-                if (_attackSeconds > 0.4)
+                if (_attacking == false)
                 {
-                    _attacking = false;
                     _attackSeconds = 0;
                 }
             }
@@ -210,89 +209,91 @@ namespace Final_Project
         {
             if (_state == PlayerState.Walk) //Walk cycle
             {
+                if (_frame == 0)
+                {
+                    _spriteFrame = new Rectangle(46, 53, 80, 75);
+                }
+                else if (_frame == 1)
+                {
+                    _spriteFrame = new Rectangle(178, 53, 80, 75);
+                }
+                else if (_frame == 2)
+                {
+                    _spriteFrame = new Rectangle(300, 53, 80, 75);
+                }
+                else if (_frame == 3)
+                {
+                    _spriteFrame = new Rectangle(425, 53, 80, 75);
+                }
+                else if (_frame == 4)
+                {
+                    _spriteFrame = new Rectangle(555, 53, 80, 75);
+                }
+                else if (_frame == 5)
+                {
+                    _spriteFrame = new Rectangle(689, 53, 80, 75);
+                }
+                else if (_frame == 6)
+                {
+                    _spriteFrame = new Rectangle(814, 53, 80, 75);
+                }
+
                 if (_spriteSeconds >= 0.08)
                 {
-                    if (_frame == 0)
+                    if (_frame == 6)
                     {
-                        _spriteFrame = new Rectangle(46, 53, 80, 75);
-
-                        _frame++;
-                    }
-                    else if (_frame == 1)
-                    {
-                        _spriteFrame = new Rectangle(178, 53, 80, 75);
-
-                        _frame++;
-                    }
-                    else if (_frame == 2)
-                    {
-                        _spriteFrame = new Rectangle(300, 53, 80, 75);
-                        _frame++;
-                    }
-                    else if (_frame == 3)
-                    {
-                        _spriteFrame = new Rectangle(425, 53, 80, 75);
-                        _frame++;
-                    }
-                    else if (_frame == 4)
-                    {
-                        _spriteFrame = new Rectangle(555, 53, 80, 75);
-                        _frame++;
-                    }
-                    else if (_frame == 5)
-                    {
-                        _spriteFrame = new Rectangle(689, 53, 80, 75);
-                        _frame++;
-                    }
-                    else if (_frame == 6)
-                    {
-                        _spriteFrame = new Rectangle(814, 53, 80, 75);
                         _frame = 0;
                     }
+                    else
+                    {
+                        _frame++;
+                    }
+
                     _spriteSeconds = 0;
                 }
             }
             else if (_state == PlayerState.Idle) //Idle cycle
             {
+                if (_frame == 0)
+                {
+                    _spriteFrame = new Rectangle(38, 53, 80, 75);
+                }
+                else if (_frame == 1)
+                {
+                    _spriteFrame = new Rectangle(166, 53, 80, 75);
+                }
+                else if (_frame == 2)
+                {
+                    _spriteFrame = new Rectangle(294, 53, 80, 75);
+                }
+                else if (_frame == 3)
+                {
+                    _spriteFrame = new Rectangle(422, 53, 80, 75);
+                }
+                else if (_frame == 4)
+                {
+                    _spriteFrame = new Rectangle(550, 53, 80, 75);
+                }
+                else if (_frame == 5)
+                {
+                    _spriteFrame = new Rectangle(678, 53, 80, 75);
+                }
+                else if (_frame == 6)
+                {
+                    _spriteFrame = new Rectangle(806, 53, 80, 75);
+                }
+
                 if (_spriteSeconds >= 0.09)
                 {
-                    if (_frame == 0)
+                    if (_frame == 6)
                     {
-                        _spriteFrame = new Rectangle(38, 53, 80, 75);
-
-                        _frame++;
-                    }
-                    else if (_frame == 1)
-                    {
-                        _spriteFrame = new Rectangle(166, 53, 80, 75);
-
-                        _frame++;
-                    }
-                    else if (_frame == 2)
-                    {
-                        _spriteFrame = new Rectangle(294, 53, 80, 75);
-                        _frame++;
-                    }
-                    else if (_frame == 3)
-                    {
-                        _spriteFrame = new Rectangle(422, 53, 80, 75);
-                        _frame++;
-                    }
-                    else if (_frame == 4)
-                    {
-                        _spriteFrame = new Rectangle(550, 53, 80, 75);
-                        _frame++;
-                    }
-                    else if (_frame == 5)
-                    {
-                        _spriteFrame = new Rectangle(678, 53, 80, 75);
-                        _frame++;
-                    }
-                    else if (_frame == 6)
-                    {
-                        _spriteFrame = new Rectangle(806, 53, 80, 75);
                         _frame = 0;
                     }
+                    else
+                    {
+                        _frame++;
+                    }
+
                     _spriteSeconds = 0;
                 }
             }
@@ -302,78 +303,82 @@ namespace Final_Project
             }
             else if (_state == PlayerState.Run) //Run cycle
             {
+                if (_frame == 0)
+                {
+                    _spriteFrame = new Rectangle(34, 53, 80, 75);
+                }
+                else if (_frame == 1)
+                {
+                    _spriteFrame = new Rectangle(163, 53, 80, 75);
+                }
+                else if (_frame == 2)
+                {
+                    _spriteFrame = new Rectangle(282, 53, 80, 75);
+                }
+                else if (_frame == 3)
+                {
+                    _spriteFrame = new Rectangle(414, 53, 80, 75);
+                }
+                else if (_frame == 4)
+                {
+                    _spriteFrame = new Rectangle(550, 53, 80, 75);
+                }
+                else if (_frame == 5)
+                {
+                    _spriteFrame = new Rectangle(676, 53, 80, 75);
+                }
+                else if (_frame == 6)
+                {
+                    _spriteFrame = new Rectangle(799, 53, 80, 75);
+                }
+                else if (_frame == 7)
+                {
+                    _spriteFrame = new Rectangle(931, 53, 80, 75);
+                }
+
                 if (_spriteSeconds >= 0.07)
                 {
-                    if (_frame == 0)
+                    if (_frame == 7)
                     {
-                        _spriteFrame = new Rectangle(34, 53, 80, 75);
-
-                        _frame++;
-                    }
-                    else if (_frame == 1)
-                    {
-                        _spriteFrame = new Rectangle(163, 53, 80, 75);
-
-                        _frame++;
-                    }
-                    else if (_frame == 2)
-                    {
-                        _spriteFrame = new Rectangle(282, 53, 80, 75);
-                        _frame++;
-                    }
-                    else if (_frame == 3)
-                    {
-                        _spriteFrame = new Rectangle(414, 53, 80, 75);
-                        _frame++;
-                    }
-                    else if (_frame == 4)
-                    {
-                        _spriteFrame = new Rectangle(550, 53, 80, 75);
-                        _frame++;
-                    }
-                    else if (_frame == 5)
-                    {
-                        _spriteFrame = new Rectangle(676, 53, 80, 75);
-                        _frame++;
-                    }
-                    else if (_frame == 6)
-                    {
-                        _spriteFrame = new Rectangle(799, 53, 80, 75);
-                        _frame++;
-                    }
-                    else if (_frame == 7)
-                    {
-                        _spriteFrame = new Rectangle(931, 53, 80, 75);
                         _frame = 0;
                     }
+                    else
+                    {
+                        _frame++;
+                    }
+
                     _spriteSeconds = 0;
                 }
             }
             else if (_state == PlayerState.Attack) //Attack cycle
             {
+                if (_frame == 0)
+                {
+                    _spriteFrame = new Rectangle(25, 53, 80, 75);
+                }
+                else if (_frame == 1)
+                {
+                    _spriteFrame = new Rectangle(159, 53, 80, 75);
+                }
+                else if (_frame == 2)
+                {
+                    _spriteFrame = new Rectangle(296, 53, 80, 75);
+                }
+                else if (_frame == 3)
+                {
+                    _spriteFrame = new Rectangle(424, 53, 80, 75);
+                }
+
                 if (_spriteSeconds >= 0.1)
                 {
-                    if (_frame == 0)
+                    if (_frame == 3)
                     {
-                        _spriteFrame = new Rectangle(25, 53, 80, 75);
-
-                        _frame++;
-                    }
-                    else if (_frame == 1)
-                    {
-                        _spriteFrame = new Rectangle(159, 53, 80, 75);
-
-                        _frame++;
-                    }
-                    else if (_frame == 2)
-                    {
-                        _spriteFrame = new Rectangle(296, 53, 80, 75);
-                        _frame++;
-                    }
-                    else if (_frame == 3)
-                    {
-                        _spriteFrame = new Rectangle(424, 53, 80, 75);
                         _frame = 0;
+                        _attacking = false;
+                    }
+                    else
+                    {
+                        _frame++;
                     }
                     _spriteSeconds = 0;
                 }
