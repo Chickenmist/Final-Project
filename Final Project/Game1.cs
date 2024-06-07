@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Net.Http;
 using System.Security.Principal;
 
 namespace Final_Project
@@ -28,10 +29,9 @@ namespace Final_Project
         Dash,
         LightningBolt,
         SlashTwo,
-
         Jump,
         Hurt,
-        
+        HurtFlying,
         FlyingIdle,
         HorizontalBeam,
         VerticalBeam,
@@ -98,6 +98,7 @@ namespace Final_Project
 
         Texture2D bossJumpTexture;
         Texture2D bossHurtTexture;
+        Texture2D bossHurtFlyingTexture;
         Texture2D bossDeadTexture;
 
         Texture2D bossPhaseTwoIdleTexture;
@@ -154,6 +155,7 @@ namespace Final_Project
             bossTextures.Add(bossSlashTwoTexture);
             bossTextures.Add(bossJumpTexture);
             bossTextures.Add(bossHurtTexture);
+            bossTextures.Add(bossHurtFlyingTexture);
             bossTextures.Add(bossPhaseTwoIdleTexture);
             bossTextures.Add(bossHorizontalBeamTexture);
             bossTextures.Add(bossVerticalBeamTexture);
@@ -186,9 +188,10 @@ namespace Final_Project
             bossLightingAttackTexture = Content.Load<Texture2D>("Lightning Bolt");
             bossJumpTexture = Content.Load<Texture2D>("Boss Jump");
             bossHurtTexture = Content.Load<Texture2D>("Boss Hurt");
+            bossHurtFlyingTexture = Content.Load<Texture2D>("Boss Hurt Flying");
             bossPhaseTwoIdleTexture = Content.Load<Texture2D>("Boss Flying");
             bossHorizontalBeamTexture = Content.Load<Texture2D>("Boss Horizontal Beam");
-            bossVerticalBeamTexture = Content.Load<Texture2D>("");
+            bossVerticalBeamTexture = Content.Load<Texture2D>("Boss Vertical Beam");
             bossDeadTexture = Content.Load<Texture2D>("Boss Dead");
             //
 
