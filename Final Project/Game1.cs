@@ -17,6 +17,7 @@ namespace Final_Project
         Run,
         Attack,
         Jumping,
+        Hurt,
         Dead
     }
 
@@ -40,10 +41,23 @@ namespace Final_Project
 
     enum Difficulty
     {
-        Easy,
-        Normal,
-        Hard,
-        HellAndHell
+        Human,
+        BoneHunter,
+        LegendaryBoneKnight,
+        MustDie
+    }
+
+    enum Screen
+    {
+        MainMenu,
+        Controls,
+        Information,
+        MusicScreen,
+        Naming,
+        Inspriation,
+        FightScreen,
+        WinScreen,
+        LoseScreen
     }
 
     public class Game1 : Game
@@ -54,7 +68,9 @@ namespace Final_Project
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        int difficulty;
+        Difficulty difficultySelected;
+
+        Screen currentScreen;
 
         KeyboardState keyboardState;
         MouseState mouseState;
@@ -79,6 +95,14 @@ namespace Final_Project
         Texture2D bossSlashTwoTexture;
         Texture2D bossDashTexture;
         Texture2D bossLightingAttackTexture;
+
+        Texture2D bossJumpTexture;
+        Texture2D bossHurtTexture;
+        Texture2D bossDeadTexture;
+
+        Texture2D bossPhaseTwoIdleTexture;
+        Texture2D bossHorizontalBeamTexture;
+        Texture2D bossVerticalBeamTexture;
         //
 
         //Background and floor
@@ -108,6 +132,8 @@ namespace Final_Project
 
             floor = new Rectangle(0, 490, 960, 50);
 
+            currentScreen = Screen.FightScreen;
+
             base.Initialize();
             
             //Player
@@ -126,6 +152,12 @@ namespace Final_Project
             bossTextures.Add(bossDashTexture);
             bossTextures.Add(bossLightingAttackTexture);
             bossTextures.Add(bossSlashTwoTexture);
+            bossTextures.Add(bossJumpTexture);
+            bossTextures.Add(bossHurtTexture);
+            bossTextures.Add(bossPhaseTwoIdleTexture);
+            bossTextures.Add(bossHorizontalBeamTexture);
+            bossTextures.Add(bossVerticalBeamTexture);
+            bossTextures.Add(bossDeadTexture);
 
             boss = new Boss(bossTextures,  40, 40);
             //
@@ -152,6 +184,12 @@ namespace Final_Project
             bossSlashTwoTexture = Content.Load<Texture2D>("Boss Attack 2");
             bossDashTexture = Content.Load<Texture2D>("Boss Dash");
             bossLightingAttackTexture = Content.Load<Texture2D>("Lightning Bolt");
+            bossJumpTexture = Content.Load<Texture2D>("Boss Jump");
+            bossHurtTexture = Content.Load<Texture2D>("Boss Hurt");
+            bossPhaseTwoIdleTexture = Content.Load<Texture2D>("Boss Flying");
+            bossHorizontalBeamTexture = Content.Load<Texture2D>("Boss Horizontal Beam");
+            bossVerticalBeamTexture = Content.Load<Texture2D>("");
+            bossDeadTexture = Content.Load<Texture2D>("Boss Dead");
             //
 
             //Background Sprite
@@ -188,13 +226,48 @@ namespace Final_Project
 
             _spriteBatch.Begin();
 
-            _spriteBatch.Draw(backgroundTexture, background, Color.White);
+            if (currentScreen == Screen.MainMenu)
+            {
 
-            player.Draw(_spriteBatch);
-            //_spriteBatch.Draw(rectangleTexture, player.playerHurtbox, new Color(Color.Black, 0.5f));
-            //_spriteBatch.Draw(rectangleTexture, player.playerHitbox, new Color(Color.Red, 0.5f));
+            }
+            else if (currentScreen == Screen.Controls)
+            {
 
-            boss.Draw(_spriteBatch);
+            }
+            else if (currentScreen == Screen.Information)
+            {
+
+            }
+            else if (currentScreen == Screen.MusicScreen)
+            {
+
+            }
+            else if (currentScreen == Screen.Naming)
+            {
+
+            }
+            else if (currentScreen == Screen.Inspriation)
+            {
+
+            }
+            else if (currentScreen == Screen.FightScreen)
+            {
+                _spriteBatch.Draw(backgroundTexture, background, Color.White);
+
+                player.Draw(_spriteBatch);
+                //_spriteBatch.Draw(rectangleTexture, player.playerHurtbox, new Color(Color.Black, 0.5f));
+                //_spriteBatch.Draw(rectangleTexture, player.playerHitbox, new Color(Color.Red, 0.5f));
+
+                boss.Draw(_spriteBatch);
+            }
+            else if (currentScreen == Screen.WinScreen)
+            {
+
+            }
+            else if (currentScreen == Screen.LoseScreen)
+            {
+
+            }
 
             _spriteBatch.End();
 

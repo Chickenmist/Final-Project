@@ -42,9 +42,14 @@ namespace Final_Project
         
         public void Update(GameTime gameTime, KeyboardState keyboardState, MouseState mouseState)
         {
-            if (_state != PlayerState.Attack || _state != PlayerState.Dead)
+            if (_state != PlayerState.Attack || _state != PlayerState.Dead || _state != PlayerState.Hurt)
             {
                 _state = PlayerState.Idle;
+            }
+
+            if (_state == PlayerState.Hurt)
+            {
+                _speed.X = 0;
             }
 
             //Jumping
@@ -141,26 +146,26 @@ namespace Final_Project
             //
 
             //Movement
-            if (keyboardState.IsKeyDown(Keys.A) && keyboardState.IsKeyDown(Keys.LeftShift)) //Running left
+            if (keyboardState.IsKeyDown(Keys.LeftShift) && keyboardState.IsKeyDown(Keys.A)) //Running left
             {
                 _facingLeft = true;
                 _facingRight = false;
 
                 _speed.X = -8.5f;
 
-                if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead)
+                if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead && _state != PlayerState.Hurt)
                 {
                     _state = PlayerState.Run;
                 }
             }
-            else if (keyboardState.IsKeyDown(Keys.D) && keyboardState.IsKeyDown(Keys.LeftShift)) //Running right
+            else if (keyboardState.IsKeyDown(Keys.LeftShift) && keyboardState.IsKeyDown(Keys.D)) //Running right
             {
                 _facingRight = true;
                 _facingLeft = false;
 
                 _speed.X = 8.5f;
 
-                if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead)
+                if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead && _state != PlayerState.Hurt)
                 {
                     _state = PlayerState.Run;
                 }
@@ -172,7 +177,7 @@ namespace Final_Project
 
                 _speed.X = -4.5f;
 
-                if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead)
+                if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead && _state != PlayerState.Hurt)
                 {
                     _state = PlayerState.Walk;
                 }
@@ -184,7 +189,7 @@ namespace Final_Project
 
                 _speed.X = 4.5f;
 
-                if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead)
+                if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead && _state != PlayerState.Hurt)
                 {
                     _state = PlayerState.Walk;
                 }
@@ -194,7 +199,7 @@ namespace Final_Project
             {
                 _speed.X = 0;
             }
-            
+
             Move();
             GenerateBoxes();
             //
@@ -240,7 +245,7 @@ namespace Final_Project
 
                 if (_spriteSeconds >= 0.08)
                 {
-                    if (_frame == 6)
+                    if (_frame >= 6)
                     {
                         _frame = 0;
                     }
@@ -285,7 +290,7 @@ namespace Final_Project
 
                 if (_spriteSeconds >= 0.09)
                 {
-                    if (_frame == 6)
+                    if (_frame >= 6)
                     {
                         _frame = 0;
                     }
@@ -338,7 +343,7 @@ namespace Final_Project
 
                 if (_spriteSeconds >= 0.07)
                 {
-                    if (_frame == 7)
+                    if (_frame >= 7)
                     {
                         _frame = 0;
                     }

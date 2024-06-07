@@ -60,12 +60,9 @@ namespace Final_Project
                 {
                     //_bossAction = _random.Next(1, 4);
 
-                    _bossAction = 1;
-
                     if (_bossAction == 1) //Slash attack
                     {
                         _state = BossState.SlashOne;
-                        _bossAction = 0;
                     }
                     else if (_bossAction == 2) //Dash
                     {
@@ -109,13 +106,13 @@ namespace Final_Project
 
             }
 
-            Move();
+            //Move();
 
-            if (_coolDown > 0)
+            if (_coolDown >= 0)
             {
                 if (_health > 50)
                 {
-                    _state = BossState.GroundIdle;
+                    _state = BossState.FlyingIdle;
                 }
                 else if (_health <= 50)
                 {
@@ -144,42 +141,44 @@ namespace Final_Project
         {
             if (_state == BossState.GroundIdle) //Phase one idle (grounded idle)
             {
+                if (_frame == 0)
+                {
+                    _spriteFrame = new Rectangle(13, 43, 119, 85);
+                }
+                else if (_frame == 1)
+                {
+                    _spriteFrame = new Rectangle(140, 43, 119, 85);
+                }
+                else if (_frame == 2)
+                {
+                    _spriteFrame = new Rectangle(265, 43, 119, 85);
+                }
+                else if (_frame == 3)
+                {
+                    _spriteFrame = new Rectangle(392, 43, 119, 85);
+                }
+                else if (_frame == 4)
+                {
+                    _spriteFrame = new Rectangle(520, 43, 119, 85);
+                }
+                else if (_frame == 5)
+                {
+                    _spriteFrame = new Rectangle(646, 43, 119, 85);
+                }
+                else if (_frame == 6)
+                {
+                    _spriteFrame = new Rectangle(776, 43, 119, 85);
+                }
+
                 if (_frameTime >= 0.1)
                 {
-                    if(_frame == 0)
+                    if (_frame >= 6)
                     {
-                        _spriteFrame = new Rectangle(13, 43, 119, 85);
-                        _frame++;
-                    }
-                    else if(_frame == 1)
-                    {
-                        _spriteFrame = new Rectangle(140, 43, 119, 85);
-                        _frame++;
-                    }
-                    else if (_frame == 2)
-                    {
-                        _spriteFrame = new Rectangle(265, 43, 119, 85);
-                        _frame++;
-                    }
-                    else if (_frame == 3)
-                    {
-                        _spriteFrame = new Rectangle(392, 43, 119, 85);
-                        _frame++;
-                    }
-                    else if (_frame == 4)
-                    {
-                        _spriteFrame = new Rectangle(520, 43, 119, 85);
-                        _frame++;
-                    }
-                    else if (_frame == 5)
-                    {
-                        _spriteFrame = new Rectangle(646, 43, 119, 85);
-                        _frame++;
-                    }
-                    else if (_frame == 6)
-                    {
-                        _spriteFrame = new Rectangle(776, 43, 119, 85);
                         _frame = 0;
+                    }
+                    else
+                    {
+                        _frame++;
                     }
 
                     _frameTime = 0;
@@ -232,7 +231,7 @@ namespace Final_Project
 
                 if (_frameTime >= 0.1)
                 {
-                    if (_frame == 9)
+                    if (_frame >= 9)
                     {
                         _frame = 0;
                     }
@@ -263,7 +262,7 @@ namespace Final_Project
                 }
                 if (_frameTime >= 0.15)
                 {
-                    if (_frame == 3)
+                    if (_frame >= 3)
                     {
                         _frame = 0;
                         _coolDown = 2;
@@ -288,9 +287,13 @@ namespace Final_Project
             {
 
             }
-            else if (_state == BossState.FlyingIdle) //Phase two idle (flying idle)
+            else if (_state == BossState.Hurt)
             {
 
+            }
+            else if (_state == BossState.FlyingIdle) //Phase two idle (flying idle)
+            {
+                _spriteFrame = new Rectangle(10, 43, 119, 85);
             }
             else if (_state == BossState.HorizontalBeam) //Horizontal beam
             {
