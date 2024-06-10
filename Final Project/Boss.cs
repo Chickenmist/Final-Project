@@ -22,6 +22,8 @@ namespace Final_Project
 
         BossState _state;
 
+        private int _difficulty;
+
         private int _health;
 
         private bool _active;
@@ -45,11 +47,11 @@ namespace Final_Project
         {
             _bossAction = 0;
 
-            if (player.playerHurtbox.X < _location.X)
+            if (_state != BossState.Dash && player.playerHurtbox.X < _location.X)
             {
                 _facingLeft = true;
             }
-            else if (player.playerHurtbox.X > _location.X)
+            else if (_state != BossState.Dash && player.playerHurtbox.X > _location.X)
             {
                 _facingLeft = false;
             }
@@ -58,7 +60,7 @@ namespace Final_Project
             {
                 if (_active == false && _coolDown == 0)
                 {
-                    //_bossAction = _random.Next(1, 4);
+                    _bossAction = _random.Next(1, 4);
 
                     if (_bossAction == 1) //Slash attack
                     {
@@ -89,7 +91,14 @@ namespace Final_Project
                 }
                 else if (_state == BossState.Dash)
                 {
+                    if (_facingLeft)
+                    {
 
+                    }
+                    else
+                    {
+
+                    }
                 }
                 else if (_state == BossState.LightningBolt || _state == BossState.GroundIdle)
                 {
@@ -108,11 +117,11 @@ namespace Final_Project
 
             //Move();
 
-            if (_coolDown >= 0)
+            if (_coolDown > 0)
             {
                 if (_health > 50)
                 {
-                    _state = BossState.FlyingIdle;
+                    _state = BossState.GroundIdle;
                 }
                 else if (_health <= 50)
                 {
@@ -135,6 +144,41 @@ namespace Final_Project
         {
             _location.X += (int)_speed.X;
             _location.Y += (int)_speed.Y;
+
+            if (_facingLeft)
+            {
+                if (_location.Left > -119)
+                {
+                    _location.X = -119;
+                }
+                else
+                {
+                    _coolDown = 2;
+                    _active = false;
+                }
+            }
+            else
+            {
+                if (_location.Left < -76)
+                {
+
+                }
+                _speed.X = 6;
+            }
+        }
+
+        public void StartCooldown()
+        {
+            if (_difficulty == 0)
+            {
+
+            }
+        }
+
+        public int GetDifficulty
+        {
+            get { return _difficulty; }
+            set { _difficulty = value; }
         }
 
         private void AnimateFrame()
@@ -260,6 +304,7 @@ namespace Final_Project
                 {
                     _spriteFrame = new Rectangle(400, 43, 119, 85);
                 }
+
                 if (_frameTime >= 0.15)
                 {
                     if (_frame >= 3)
@@ -277,11 +322,117 @@ namespace Final_Project
             }
             else if(_state == BossState.Dash) //Dash
             {
-                
+                if (_frame == 0)
+                {
+                    _spriteFrame = new Rectangle(42, 43, 119, 85);
+                }
+                else if (_frame == 1)
+                {
+                    _spriteFrame = new Rectangle(168, 43, 119, 85);
+                }
+                else if (_frame == 2)
+                {
+                    _spriteFrame = new Rectangle(290, 43, 119, 85);
+                }
+                else if (_frame == 3)
+                {
+                    _spriteFrame = new Rectangle(424, 43, 119, 85);
+                }
+                else if (_frame == 4)
+                {
+                    _spriteFrame = new Rectangle(560, 43, 119, 85);
+                }
+                else if (_frame == 5)
+                {
+                    _spriteFrame = new Rectangle(678, 43, 119, 85);
+                }
+                else if ( _frame == 6)
+                {
+                    _spriteFrame = new Rectangle(804, 43, 119, 85);
+                }
+                else if (_frame == 7)
+                {
+                    _spriteFrame = new Rectangle(936, 43, 119, 85);
+                }
+
+                if (_frameTime >= 0.06)
+                {
+                    if (_frame >= 7)
+                    {
+                        _frame = 0;
+                    }
+                    else
+                    {
+                        _frame++;
+                    }
+                    _frameTime = 0;
+                }
             }
             else if(_state == BossState.LightningBolt) //Lightning Attack
             {
+                if (_frame == 0)
+                {
+                    _spriteFrame = new Rectangle(11, 43, 119, 85);
+                }
+                else if (_frame == 1)
+                {
+                    _spriteFrame = new Rectangle(133, 43, 119, 85);
+                }
+                else if (_frame == 2)
+                {
+                    _spriteFrame = new Rectangle(267, 43, 119, 85);
+                }
+                else if (_frame == 3)
+                {
+                    _spriteFrame = new Rectangle(395, 43, 119, 85);
+                }
+                else if (_frame == 4)
+                {
+                    _spriteFrame = new Rectangle(521, 43, 119, 85);
+                }
+                else if (_frame == 5)
+                {
+                    _spriteFrame = new Rectangle(649, 43, 119, 85);
+                }
+                else if (_frame == 6)
+                {
+                    _spriteFrame = new Rectangle(777, 43, 119, 85);
+                }
+                else if (_frame == 7)
+                {
+                    _spriteFrame = new Rectangle(906, 43, 119, 85);
+                }
+                else if (_frame == 8)
+                {
+                    _spriteFrame = new Rectangle(1036, 43, 119, 85);
+                }
+                else if (_frame == 9)
+                {
+                    _spriteFrame = new Rectangle(1164, 43, 119, 85);
+                }
+                else if (_frame == 10)
+                {
+                    _spriteFrame = new Rectangle(1292, 43, 119, 85);
+                }
+                else if (_frame == 11)
+                {
+                    _spriteFrame = new Rectangle(1421, 43, 119, 85);
+                }
 
+                if (_frameTime >= 0.06)
+                {
+                    if (_frame >= 11)
+                    {
+                        _frame = 0;
+                        _coolDown = 2;
+                        _active = false;
+                    }
+                    else
+                    {
+                        _frame++;
+                    }
+                    _frameTime = 0;
+                }
             }
             else if (_state == BossState.Jump) //Jump
             {
@@ -293,7 +444,48 @@ namespace Final_Project
             }
             else if (_state == BossState.FlyingIdle) //Phase two idle (flying idle)
             {
-                _spriteFrame = new Rectangle(10, 43, 119, 85);
+                if (_frame == 0)
+                {
+                    _spriteFrame = new Rectangle(26, 43, 119, 85);
+                }
+                else if (_frame == 1)
+                {
+                    _spriteFrame = new Rectangle(154, 43, 119, 85);
+                }
+                else if (_frame == 2)
+                {
+                    _spriteFrame = new Rectangle(282, 43, 119, 85);
+                }
+                else if (_frame == 3)
+                {
+                    _spriteFrame = new Rectangle(411, 43, 119, 85);
+                }
+                else if (_frame == 4)
+                {
+                    _spriteFrame = new Rectangle(538, 43, 119, 85);
+                }
+                else if (_frame == 5)
+                {
+                    _spriteFrame = new Rectangle(666, 43, 119, 85);
+                }
+                else if (_frame == 6)
+                {
+                    _spriteFrame = new Rectangle(794, 43, 119, 85);
+                }
+
+                if (_frameTime >= 0.1)
+                {
+                    if (_frame >= 6)
+                    {
+                        _frame = 0;
+                    }
+                    else
+                    {
+                        _frame++;
+                    }
+
+                    _frameTime = 0;
+                }
             }
             else if (_state == BossState.HorizontalBeam) //Horizontal beam
             {

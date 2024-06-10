@@ -32,6 +32,9 @@ namespace Final_Project
         private bool _falling;
         private bool _attacking = false;
 
+        private int _difficulty;
+        private int _health;
+
         public Player(List<Texture2D> textures, int x, int y)
         {
             _textures = textures;
@@ -418,6 +421,13 @@ namespace Final_Project
                 }
             }
         }
+
+        public int GetDifficulty
+        {
+            get { return _difficulty; }
+            set { _difficulty = value; }
+        }
+
         private void GenerateBoxes()
         {
             //Hurtbox

@@ -50,6 +50,7 @@ namespace Final_Project
     enum Screen
     {
         MainMenu,
+        Difficulty,
         Controls,
         Information,
         MusicScreen,
@@ -108,7 +109,8 @@ namespace Final_Project
 
         //Background and floor
         Rectangle background;
-        Texture2D backgroundTexture;
+        Texture2D battleBackgroundTexture;
+        Texture2D titleCardTexture;
         Rectangle floor;
         //
 
@@ -133,7 +135,9 @@ namespace Final_Project
 
             floor = new Rectangle(0, 490, 960, 50);
 
-            currentScreen = Screen.FightScreen;
+            currentScreen = Screen.MainMenu;
+
+            difficultySelected = Difficulty.MustDie;
 
             base.Initialize();
             
@@ -189,14 +193,15 @@ namespace Final_Project
             bossJumpTexture = Content.Load<Texture2D>("Boss Jump");
             bossHurtTexture = Content.Load<Texture2D>("Boss Hurt");
             bossHurtFlyingTexture = Content.Load<Texture2D>("Boss Hurt Flying");
-            bossPhaseTwoIdleTexture = Content.Load<Texture2D>("Boss Flying");
+            bossPhaseTwoIdleTexture = Content.Load<Texture2D>("Boss Flying Idle");
             bossHorizontalBeamTexture = Content.Load<Texture2D>("Boss Horizontal Beam");
             bossVerticalBeamTexture = Content.Load<Texture2D>("Boss Vertical Beam");
             bossDeadTexture = Content.Load<Texture2D>("Boss Dead");
             //
 
-            //Background Sprite
-            backgroundTexture = Content.Load<Texture2D>("Background");
+            //Background Sprites
+            battleBackgroundTexture = Content.Load<Texture2D>("Background");
+            titleCardTexture = Content.Load<Texture2D>("Title Card");
             //
 
             rectangleTexture = Content.Load<Texture2D>("rectangle");
@@ -214,9 +219,36 @@ namespace Final_Project
 
             Window.Title = $"{mouseState.X} {mouseState.Y}";
 
-            player.Update(gameTime, keyboardState, mouseState);
+            if (currentScreen == Screen.MainMenu)
+            {
 
-            boss.Update(gameTime, player);
+            }
+            else if (currentScreen == Screen.Difficulty)
+            {
+
+            }
+            else if (currentScreen == Screen.Controls)
+            {
+
+            }
+            else if (currentScreen == Screen.Information)
+            {
+
+            }
+            else if (currentScreen == Screen.MusicScreen)
+            {
+
+            }
+            else if (currentScreen == Screen.Naming)
+            {
+
+            }
+            else if (currentScreen == Screen.FightScreen)
+            {
+                player.Update(gameTime, keyboardState, mouseState);
+
+                boss.Update(gameTime, player);
+            }
 
             base.Update(gameTime);
         }
@@ -229,7 +261,12 @@ namespace Final_Project
 
             _spriteBatch.Begin();
 
+            //buttons should start at 360 and end at 480. Making this a quick note so I don't forget
             if (currentScreen == Screen.MainMenu)
+            {
+                _spriteBatch.Draw(titleCardTexture, background, Color.White);
+            }
+            else if (currentScreen == Screen.Difficulty)
             {
 
             }
@@ -255,7 +292,7 @@ namespace Final_Project
             }
             else if (currentScreen == Screen.FightScreen)
             {
-                _spriteBatch.Draw(backgroundTexture, background, Color.White);
+                _spriteBatch.Draw(battleBackgroundTexture, background, Color.White);
 
                 player.Draw(_spriteBatch);
                 //_spriteBatch.Draw(rectangleTexture, player.playerHurtbox, new Color(Color.Black, 0.5f));
