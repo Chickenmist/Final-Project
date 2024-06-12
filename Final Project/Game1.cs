@@ -114,6 +114,35 @@ namespace Final_Project
         Rectangle floor;
         //
 
+        //Button Textures
+
+
+        Texture2D humanUpTexture;
+        Texture2D humanDownTexture;
+        Texture2D boneHunterUpTexture;
+        Texture2D boneHunterDownTexture;
+        Texture2D lBKUpTexture;
+        Texture2D lBKDownTexture;
+        Texture2D mustDieUpTexture;
+        Texture2D mustDieDownTexture;
+        //
+
+        //Button rectangles
+
+        Rectangle humanRectangle;
+        Rectangle boneHunterRectangle;
+        Rectangle lBKRectangle;
+        Rectangle mustDieRectangle;
+        //
+
+        //Variables to check which button the mouse is hovering
+
+        bool hoverHuman;
+        bool hoverBoneHunter;
+        bool hoverLBK;
+        bool hoverMustDie;
+        //
+
         Texture2D rectangleTexture;
 
         public Game1()
@@ -135,9 +164,14 @@ namespace Final_Project
 
             floor = new Rectangle(0, 490, 960, 50);
 
-            currentScreen = Screen.MainMenu;
+            currentScreen = Screen.Difficulty;
 
             difficultySelected = Difficulty.MustDie;
+
+            humanRectangle = new Rectangle(370, 30, 128, 32);
+            boneHunterRectangle = new Rectangle(370, 64, 128, 32);
+            lBKRectangle = new Rectangle(370, 96, 128, 32);
+            mustDieRectangle = new Rectangle(370, 128, 128, 32);
 
             base.Initialize();
             
@@ -204,6 +238,19 @@ namespace Final_Project
             titleCardTexture = Content.Load<Texture2D>("Title Card");
             //
 
+            //Button Sprites
+
+
+            humanUpTexture = Content.Load<Texture2D>("Human Up");
+            humanDownTexture = Content.Load<Texture2D>("Human Down");
+            boneHunterUpTexture = Content.Load<Texture2D>("Bone Hunter Up");
+            boneHunterDownTexture = Content.Load<Texture2D>("Bone Hunter Down");
+            lBKUpTexture = Content.Load<Texture2D>("LBK Up");
+            lBKDownTexture = Content.Load<Texture2D>("LBK Down");
+            mustDieUpTexture = Content.Load<Texture2D>("Must Die Up");
+            mustDieDownTexture = Content.Load<Texture2D>("Must Die Down");
+            //
+
             rectangleTexture = Content.Load<Texture2D>("rectangle");
         }
 
@@ -225,7 +272,73 @@ namespace Final_Project
             }
             else if (currentScreen == Screen.Difficulty)
             {
+                if (humanRectangle.Contains(mouseState.Position))
+                {
+                    hoverHuman = true;
 
+                    if (mouseState.LeftButton == ButtonState.Pressed)
+                    {
+                        boss.GetDifficulty = 1;
+                        player.GetDifficulty = 1;
+
+                        currentScreen = Screen.FightScreen;
+                    }
+                }
+                else
+                {
+                    hoverHuman = false;
+                }
+                
+                if (boneHunterRectangle.Contains(mouseState.Position))
+                {
+                    hoverBoneHunter = true;
+
+                    if (mouseState.LeftButton == ButtonState.Pressed)
+                    {
+                        boss.GetDifficulty = 2;
+                        player.GetDifficulty = 2;
+
+                        currentScreen = Screen.FightScreen;
+                    }
+                }
+                else
+                {
+                    hoverBoneHunter = false;
+                }
+                
+                if (lBKRectangle.Contains(mouseState.Position))
+                {
+                    hoverLBK = true;
+
+                    if (mouseState.LeftButton == ButtonState.Pressed)
+                    {
+                        boss.GetDifficulty = 3;
+                        player.GetDifficulty = 3;
+
+                        currentScreen = Screen.FightScreen;
+                    }
+                }
+                else
+                {
+                    hoverLBK = false;
+                }
+                
+                if (mustDieRectangle.Contains(mouseState.Position))
+                {
+                    hoverMustDie = true;
+
+                    if (mouseState.LeftButton == ButtonState.Pressed)
+                    {
+                        boss.GetDifficulty = 4;
+                        player.GetDifficulty = 4;
+
+                        currentScreen = Screen.FightScreen;
+                    }
+                }
+                else
+                {
+                    hoverMustDie = false;
+                }
             }
             else if (currentScreen == Screen.Controls)
             {
@@ -261,13 +374,49 @@ namespace Final_Project
 
             _spriteBatch.Begin();
 
-            //buttons should start at 360 and end at 480. Making this a quick note so I don't forget
             if (currentScreen == Screen.MainMenu)
             {
                 _spriteBatch.Draw(titleCardTexture, background, Color.White);
             }
             else if (currentScreen == Screen.Difficulty)
             {
+                _spriteBatch.Draw(titleCardTexture, background, Color.White);
+
+                if (hoverHuman)
+                {
+                    _spriteBatch.Draw(humanDownTexture, humanRectangle, Color.White);
+                }
+                else
+                {
+                    _spriteBatch.Draw(humanUpTexture, humanRectangle, Color.White);
+                }
+
+                if (hoverBoneHunter)
+                {
+                    _spriteBatch.Draw(boneHunterDownTexture, boneHunterRectangle, Color.White);
+                }
+                else
+                {
+                    _spriteBatch.Draw(boneHunterUpTexture, boneHunterRectangle, Color.White);
+                }
+
+                if (hoverLBK)
+                {
+                    _spriteBatch.Draw(lBKDownTexture, lBKRectangle, Color.White);
+                }
+                else
+                {
+                    _spriteBatch.Draw(lBKUpTexture, lBKRectangle, Color.White);
+                }
+
+                if (hoverMustDie)
+                {
+                    _spriteBatch.Draw(mustDieDownTexture, mustDieRectangle, Color.White);
+                }
+                else
+                {
+                    _spriteBatch.Draw(mustDieUpTexture, mustDieRectangle, Color.White);
+                }
 
             }
             else if (currentScreen == Screen.Controls)

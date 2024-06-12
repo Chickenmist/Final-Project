@@ -32,7 +32,7 @@ namespace Final_Project
         private bool _falling;
         private bool _attacking = false;
 
-        private int _difficulty;
+        private int _difficulty; //1 = Human  2 = Bone Hunter  3 = LBK  4 = Must Die
         private int _health;
 
         public Player(List<Texture2D> textures, int x, int y)

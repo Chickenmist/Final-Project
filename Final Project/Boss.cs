@@ -22,7 +22,7 @@ namespace Final_Project
 
         BossState _state;
 
-        private int _difficulty;
+        private int _difficulty; //1 = Human  2 = Bone Hunter  3 = LBK  4 = Must Die
 
         private int _health;
 
@@ -169,7 +169,19 @@ namespace Final_Project
 
         public void StartCooldown()
         {
-            if (_difficulty == 0)
+            if (_difficulty == 1) //Human
+            {
+
+            }
+            else if (_difficulty == 2) //Bone Hunter
+            {
+
+            }
+            else if (_difficulty == 3) //LBK
+            {
+
+            }
+            else if (_difficulty == 4) //Must Die
             {
 
             }
