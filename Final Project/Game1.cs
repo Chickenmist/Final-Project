@@ -361,6 +361,16 @@ namespace Final_Project
                 player.Update(gameTime, keyboardState, mouseState);
 
                 boss.Update(gameTime, player);
+
+                if (player.playerHurtbox.Intersects(boss.bossHitbox) || player.playerHurtbox.Intersects(boss.bossHurtbox)) //Player takes damage
+                {
+
+                }
+
+                if (player.playerHitbox.Intersects(boss.bossHurtbox)) //Boss takes damage
+                {
+
+                }
             }
 
             base.Update(gameTime);
@@ -448,6 +458,8 @@ namespace Final_Project
                 //_spriteBatch.Draw(rectangleTexture, player.playerHitbox, new Color(Color.Red, 0.5f));
 
                 boss.Draw(_spriteBatch);
+                _spriteBatch.Draw(rectangleTexture, boss.bossHurtbox, new Color(Color.Black, 0.5f));
+                _spriteBatch.Draw(rectangleTexture, boss.bossHitbox, new Color(Color.Red, 0.5f));
             }
             else if (currentScreen == Screen.WinScreen)
             {

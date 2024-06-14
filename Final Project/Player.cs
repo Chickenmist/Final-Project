@@ -56,7 +56,7 @@ namespace Final_Project
             }
 
             //Jumping
-            if (keyboardState.IsKeyDown(Keys.Space))
+            if (keyboardState.IsKeyDown(Keys.Space) && _state != PlayerState.Hurt)
             {
                 if (_jumping == false)
                 {
@@ -119,7 +119,7 @@ namespace Final_Project
             //
 
             //Attacking
-            if (mouseState.LeftButton == ButtonState.Pressed && _attacking == false && _attackCoolDown == 0) //Attack started
+            if (mouseState.LeftButton == ButtonState.Pressed && _attacking == false && _attackCoolDown == 0 && _state != PlayerState.Hurt) //Attack started
             {
                 _state = PlayerState.Attack;
                 _frame = 0;
@@ -426,6 +426,26 @@ namespace Final_Project
         {
             get { return _difficulty; }
             set { _difficulty = value; }
+        }
+
+        public void Damaged()
+        {
+            if (_difficulty == 1) //Human
+            {
+
+            }
+            else if (_difficulty == 2) //Bone Hunter
+            {
+
+            }
+            else if (_difficulty == 3) //LBK
+            {
+
+            }
+            else if (_difficulty == 4) //Must Die
+            {
+
+            }
         }
 
         private void GenerateBoxes()
