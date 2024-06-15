@@ -358,18 +358,18 @@ namespace Final_Project
             }
             else if (currentScreen == Screen.FightScreen)
             {
-                player.Update(gameTime, keyboardState, mouseState);
+                player.Update(gameTime, keyboardState, mouseState, boss);
 
                 boss.Update(gameTime, player);
 
                 if (player.playerHurtbox.Intersects(boss.bossHitbox) || player.playerHurtbox.Intersects(boss.bossHurtbox)) //Player takes damage
                 {
-
+                    player.Damaged();
                 }
 
                 if (player.playerHitbox.Intersects(boss.bossHurtbox)) //Boss takes damage
                 {
-
+                    boss.TakeDamage();
                 }
             }
 

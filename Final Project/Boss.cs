@@ -27,6 +27,8 @@ namespace Final_Project
         private int _health;
 
         private bool _active;
+        public bool phaseTwoTransition;
+        private bool _dead;
 
         private bool _facingLeft = true; 
         private int _frame = 0;
@@ -111,9 +113,32 @@ namespace Final_Project
                 {
                     _speed.X = 0;
                 }
+                else if (_state == BossState.Hurt)
+                {
+                    _speed.X = 0;
+                }
+                else if (_state == BossState.Jump)
+                {
+
+                }
 
             }
-            else if (_health <= 50) //Phase Two
+            else if (_health == 50 && phaseTwoTransition) //Phase two transition
+            {
+                if (_location.Y > 250)
+                {
+                    _speed.Y = -3;
+                    _state = BossState.Jump;
+                    _frame = 2;
+                }
+                else if (_location.Y <= 250)
+                {
+                    _speed.Y = 0;
+                    _state = BossState.FlyingIdle;
+                    phaseTwoTransition = false;
+                }
+            }
+            else if (_health <= 50 && phaseTwoTransition == false) //Phase Two
             {
 
             }
@@ -169,7 +194,6 @@ namespace Final_Project
                 {
                     _location.X = 960 - _location.Width;
                 }
-
             }
             else
             {
@@ -194,17 +218,13 @@ namespace Final_Project
         {
             if (_difficulty == 1) //Human
             {
-                _coolDown = 5;
+                _coolDown = 4;
             }
             else if (_difficulty == 2) //Bone Hunter
             {
-                _coolDown = 4;
+                _coolDown = 3;
             }
-            else if (_difficulty == 3) //LBK
-            {
-                _coolDown = 3.5f;
-            }
-            else if (_difficulty == 4) //Must Die
+            else if (_difficulty == 3 || _difficulty == 4) //LBK and Must Die
             {
                 _coolDown = 2;
             }
@@ -471,11 +491,83 @@ namespace Final_Project
             }
             else if (_state == BossState.Jump) //Jump
             {
+                if (_frame == 0)
+                {
+                    _spriteFrame = new Rectangle(49, 43, 119, 85);
+                }
+                else if (_frame == 1)
+                {
+                    _spriteFrame = new Rectangle(179, 43, 119, 85);
+                }
+                else if (_frame == 2)
+                {
+                    _spriteFrame = new Rectangle(306, 37, 119, 85);
+                }
+                else if (_frame == 3)
+                {
+                    _spriteFrame = new Rectangle(442, 43, 119, 85);
+                }
+                else if (_frame == 4)
+                {
+                    _spriteFrame = new Rectangle(561, 43, 119, 85);
+                }
+                else if (_frame == 5)
+                {
+                    _spriteFrame = new Rectangle(691, 43, 119, 85);
+                }
+                else if (_frame == 6)
+                {
+                    _spriteFrame = new Rectangle(819, 43, 119, 85);
+                }
+                else if (_frame == 7)
+                {
+                    _spriteFrame = new Rectangle(955, 43, 119, 85);
+                }
 
+                if (_frameTime >= 0.06)
+                {
+                    if (_frame >= 7)
+                    {
+                        _frame = 0;
+                        StartCooldown();
+                        _active = false;
+                    }
+                    else
+                    {
+                        _frame++;
+                    }
+
+                    _frameTime = 0;
+                }
             }
             else if (_state == BossState.Hurt)
             {
+                if (_frame == 0)
+                {
+                    _spriteFrame = new Rectangle(40, 43, 119, 85);
+                }
+                else if ( _frame == 1)
+                {
+                    _spriteFrame = new Rectangle(168, 43, 119, 85);
+                }
+                else if (_frame == 2)
+                {
+                    _spriteFrame = new Rectangle(296, 43, 119, 85);
+                }
 
+                if (_frameTime >= 0.06)
+                {
+                    if (_frame >= 2)
+                    {
+                        _frame = 0;
+                        _state = BossState.Jump;
+                    }
+                    else
+                    {
+                        _frame++;
+                    }
+                    _frameTime = 0;
+                }
             }
             else if (_state == BossState.FlyingIdle) //Phase two idle (flying idle)
             {
@@ -547,10 +639,6 @@ namespace Final_Project
                 {
                     bossHitbox = new Rectangle(bossHurtbox.Left - 110, bossHurtbox.Y, 110, bossHurtbox.Height);
                 }
-                else if (_state == BossState.Dash)
-                {
-                    bossHitbox = new Rectangle(bossHurtbox.X, bossHurtbox.Y, bossHurtbox.Width, bossHurtbox.Height);
-                }
                 else if (_state == BossState.LightningBolt)
                 {
                     if (_frame <= 3)
@@ -576,10 +664,8 @@ namespace Final_Project
                     else if (_frame == 11)
                     {
                         bossHitbox = new Rectangle(bossHurtbox.Left - 107, bossHurtbox.Y, 107, bossHurtbox.Height);
-                    }
-                    
+                    }   
                 }
-
             }
             else
             {
@@ -592,10 +678,6 @@ namespace Final_Project
                 else if (_state == BossState.SlashOne || _state == BossState.SlashTwo)
                 {
                     bossHitbox = new Rectangle(_location.X, bossHurtbox.Y, 110, bossHurtbox.Height);
-                }
-                else if (_state == BossState.Dash)
-                {
-                    bossHitbox = new Rectangle(bossHurtbox.X, bossHurtbox.Y, bossHurtbox.Width, bossHurtbox.Height);
                 }
                 else if (_state == BossState.LightningBolt)
                 {
@@ -629,21 +711,25 @@ namespace Final_Project
 
         public void TakeDamage()
         {
-            if (_difficulty == 1) //Human
+            if (_state != BossState.Hurt || _state != BossState.HurtFlying)
             {
+                if (_difficulty == 1) //Human
+                {
+                    _health -= 10;
+                }
+                else if (_difficulty == 2) //Bone Hunter
+                {
+                    _health -= 5;
+                }
+                else if (_difficulty == 3 || _difficulty == 4) //LBK and Must Die
+                {
+                    _health -= 2;
+                }
 
-            }
-            else if (_difficulty == 2) //Bone Hunter
-            {
-
-            }
-            else if (_difficulty == 3) //LBK
-            {
-
-            }
-            else if ( _difficulty == 4) //Must Die
-            {
-
+                if (_health == 50)
+                {
+                    phaseTwoTransition = true;
+                }
             }
         }
 

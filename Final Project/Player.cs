@@ -41,38 +41,73 @@ namespace Final_Project
             _location = new Rectangle(x, y, 100, 95);
             _speed = new Vector2();
             _state = PlayerState.Idle;
+            _attackCoolDown = 1;
+            _health = 100;
         }
-        
-        public void Update(GameTime gameTime, KeyboardState keyboardState, MouseState mouseState)
+
+        public void Update(GameTime gameTime, KeyboardState keyboardState, MouseState mouseState, Boss boss)
         {
-            if (_state != PlayerState.Attack || _state != PlayerState.Dead || _state != PlayerState.Hurt)
+            if (boss.phaseTwoTransition)
             {
                 _state = PlayerState.Idle;
             }
-
-            if (_state == PlayerState.Hurt)
+            else
             {
-                _speed.X = 0;
-            }
-
-            //Jumping
-            if (keyboardState.IsKeyDown(Keys.Space) && _state != PlayerState.Hurt)
-            {
-                if (_jumping == false)
+                if (_state != PlayerState.Attack || _state != PlayerState.Dead || _state != PlayerState.Hurt)
                 {
-                    _state = PlayerState.Jumping;
-
-                    _jumping = true;
+                    _state = PlayerState.Idle;
                 }
-                else if (_jumping) //Jump is held
+
+                if (_state == PlayerState.Hurt)
+                {
+                    _speed.X = 0;
+                }
+
+                //Jumping
+                if (keyboardState.IsKeyDown(Keys.Space) && _state != PlayerState.Hurt)
+                {
+                    if (_jumping == false)
+                    {
+                        _state = PlayerState.Jumping;
+
+                        _jumping = true;
+                    }
+                    else if (_jumping) //Jump is held
+                    {
+                        _state = PlayerState.Jumping;
+
+                        if (_location.Y > 230 && _falling == false)
+                        {
+                            _speed.Y = -6;
+                        }
+                        else if (_location.Y <= 230 && _falling == false || keyboardState.IsKeyUp(Keys.Space) && _falling == false)
+                        {
+                            _falling = true;
+                        }
+
+                        if (_falling == true)
+                        {
+                            _speed.Y = 6;
+
+                            if (_location.Bottom >= 490)
+                            {
+                                _speed.Y = 0;
+                                _falling = false;
+                                _jumping = false;
+                            }
+                        }
+                    }
+                }
+
+                if (_jumping == true && keyboardState.IsKeyUp(Keys.Space)) //Jump is not held
                 {
                     _state = PlayerState.Jumping;
 
-                    if (_location.Y > 230 && _falling == false)
+                    if (_location.Y > 320 && _falling == false)
                     {
                         _speed.Y = -6;
                     }
-                    else if (_location.Y <= 230 && _falling == false || keyboardState.IsKeyUp(Keys.Space) && _falling == false)
+                    else if (_location.Y <= 320 && _falling == false)
                     {
                         _falling = true;
                     }
@@ -89,112 +124,86 @@ namespace Final_Project
                         }
                     }
                 }
-            }
+                //
 
-            if (_jumping == true && keyboardState.IsKeyUp(Keys.Space)) //Jump is not held
-            {
-                _state = PlayerState.Jumping;
-
-                if (_location.Y > 320 && _falling == false)
+                //Attacking
+                if (mouseState.LeftButton == ButtonState.Pressed && _attacking == false && _attackCoolDown == 0 && _state != PlayerState.Hurt) //Attack started
                 {
-                    _speed.Y = -6;
-                }
-                else if (_location.Y <= 320 && _falling == false)
-                {
-                    _falling = true;
+                    _state = PlayerState.Attack;
+                    _frame = 0;
+                    _attacking = true;
+                    _attackCoolDown = 1.5f;
                 }
 
-                if (_falling == true)
+                if (_attacking == true) //Attacking
                 {
-                    _speed.Y = 6;
+                    _state = PlayerState.Attack;
 
-                    if (_location.Bottom >= 490)
+                    _attackSeconds += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    if (_attacking == false)
                     {
-                        _speed.Y = 0;
-                        _falling = false;
-                        _jumping = false;
+                        _attackSeconds = 0;
                     }
                 }
-            }
-            //
 
-            //Attacking
-            if (mouseState.LeftButton == ButtonState.Pressed && _attacking == false && _attackCoolDown == 0 && _state != PlayerState.Hurt) //Attack started
-            {
-                _state = PlayerState.Attack;
-                _frame = 0;
-                _attacking = true;
-                _attackCoolDown = 1.5f;
-            }
-
-            if (_attacking == true) //Attacking
-            {
-                _state = PlayerState.Attack;
-                
-                _attackSeconds += (float)gameTime.ElapsedGameTime.TotalSeconds;
-                if (_attacking == false)
+                if (_attackCoolDown > 0)
                 {
-                    _attackSeconds = 0;
+                    _attackCoolDown -= (float)gameTime.ElapsedGameTime.TotalSeconds;
                 }
-            }
-
-            if (_attackCoolDown > 0)
-            {
-                _attackCoolDown -= (float)gameTime.ElapsedGameTime.TotalSeconds;
-            }
-            else if (_attackCoolDown <= 0)
-            {
-                _attackCoolDown = 0;
-            }
-            //
-
-            //Movement
-            if (keyboardState.IsKeyDown(Keys.LeftShift) && keyboardState.IsKeyDown(Keys.A)) //Running left
-            {
-                _facingLeft = true;
-                _facingRight = false;
-
-                _speed.X = -8.5f;
-
-                if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead && _state != PlayerState.Hurt)
+                else if (_attackCoolDown <= 0)
                 {
-                    _state = PlayerState.Run;
+                    _attackCoolDown = 0;
                 }
-            }
-            else if (keyboardState.IsKeyDown(Keys.LeftShift) && keyboardState.IsKeyDown(Keys.D)) //Running right
-            {
-                _facingRight = true;
-                _facingLeft = false;
+                //
 
-                _speed.X = 8.5f;
-
-                if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead && _state != PlayerState.Hurt)
+                //Movement
+                if (keyboardState.IsKeyDown(Keys.LeftShift) && keyboardState.IsKeyDown(Keys.A)) //Running left
                 {
-                    _state = PlayerState.Run;
+                    _facingLeft = true;
+                    _facingRight = false;
+
+                    _speed.X = -8.5f;
+
+                    if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead && _state != PlayerState.Hurt)
+                    {
+                        _state = PlayerState.Run;
+                    }
                 }
-            }
-            else if (keyboardState.IsKeyDown(Keys.A)) //Walking left
-            {
-                _facingLeft = true;
-                _facingRight = false;
-
-                _speed.X = -4.5f;
-
-                if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead && _state != PlayerState.Hurt)
+                else if (keyboardState.IsKeyDown(Keys.LeftShift) && keyboardState.IsKeyDown(Keys.D)) //Running right
                 {
-                    _state = PlayerState.Walk;
+                    _facingRight = true;
+                    _facingLeft = false;
+
+                    _speed.X = 8.5f;
+
+                    if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead && _state != PlayerState.Hurt)
+                    {
+                        _state = PlayerState.Run;
+                    }
                 }
-            }
-            else if (keyboardState.IsKeyDown(Keys.D)) //Walking right
-            {
-                _facingRight = true;
-                _facingLeft = false;
-
-                _speed.X = 4.5f;
-
-                if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead && _state != PlayerState.Hurt)
+                else if (keyboardState.IsKeyDown(Keys.A)) //Walking left
                 {
-                    _state = PlayerState.Walk;
+                    _facingLeft = true;
+                    _facingRight = false;
+
+                    _speed.X = -4.5f;
+
+                    if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead && _state != PlayerState.Hurt)
+                    {
+                        _state = PlayerState.Walk;
+                    }
+                }
+                else if (keyboardState.IsKeyDown(Keys.D)) //Walking right
+                {
+                    _facingRight = true;
+                    _facingLeft = false;
+
+                    _speed.X = 4.5f;
+
+                    if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead && _state != PlayerState.Hurt)
+                    {
+                        _state = PlayerState.Walk;
+                    }
                 }
             }
             
@@ -202,10 +211,9 @@ namespace Final_Project
             {
                 _speed.X = 0;
             }
-
+            
             Move();
             GenerateBoxes();
-            //
 
             //Animation
             _spriteSeconds += (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -432,20 +440,27 @@ namespace Final_Project
         {
             if (_difficulty == 1) //Human
             {
-
+                _health -= 2;
             }
             else if (_difficulty == 2) //Bone Hunter
             {
-
+                _health -= 5;
             }
             else if (_difficulty == 3) //LBK
             {
-
+                _health -= 10;
             }
             else if (_difficulty == 4) //Must Die
             {
-
+                _health = 0;
             }
+
+            UpdateHealth();
+        }
+
+        private void UpdateHealth()
+        {
+            
         }
 
         private void GenerateBoxes()
