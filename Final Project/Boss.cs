@@ -27,6 +27,7 @@ namespace Final_Project
         private int _health;
 
         private bool _active;
+        private bool _falling = false;
         public bool phaseTwoTransition;
         private bool _dead;
 
@@ -40,7 +41,7 @@ namespace Final_Project
         public Boss(List<Texture2D> textures,int x, int y)
         {
             _textures = textures;
-            _location = new Rectangle(x, y, 119, 85);
+            _location = new Rectangle(x, y, 139, 105);
             _speed = new Vector2();
             _health = 100;
             _coolDown = 3;
@@ -63,7 +64,9 @@ namespace Final_Project
             {
                 if (_active == false && _coolDown == 0)
                 {
-                    _bossAction = _random.Next(1, 4);
+                    //_bossAction = _random.Next(1, 4);
+
+                    _frame = 0;
 
                     if (_bossAction == 1) //Slash attack
                     {
@@ -119,7 +122,36 @@ namespace Final_Project
                 }
                 else if (_state == BossState.Jump)
                 {
+                    if (_facingLeft)
+                    {
+                        _speed.X = 2;
+                    }
+                    else
+                    {
+                        _speed.X = -2;
+                    }
 
+                    if (_location.Y > 200 && _falling == false)
+                    {
+                        _speed.Y = -2;
+                    }
+                    else if (_location.Y <= 200 && _falling == false)
+                    {
+                        _falling = true;
+                        _speed.Y = 2;
+                    }
+                    else if (_location.Bottom >= 490 && _falling)
+                    {
+                        _falling = false;
+                        _speed.Y = 0;
+                        _location.Y = 490 - bossHurtbox.Height;
+                        StartCooldown();
+                    }
+                }
+                else if (_state == BossState.GroundIdle)
+                {
+                    _speed.Y = 0;
+                    _speed.X = 0;
                 }
 
             }
@@ -164,6 +196,11 @@ namespace Final_Project
             {
                 _coolDown = 0;
             }
+
+            //if(player.playerHitbox.Intersects(bossHurtbox))
+            //{
+            //    TakeDamage();
+            //}
 
             Move();
             GenerateBoxes();
@@ -505,11 +542,11 @@ namespace Final_Project
                 }
                 else if (_frame == 3)
                 {
-                    _spriteFrame = new Rectangle(442, 43, 119, 85);
+                    _spriteFrame = new Rectangle(440, 33, 119, 85);
                 }
                 else if (_frame == 4)
                 {
-                    _spriteFrame = new Rectangle(561, 43, 119, 85);
+                    _spriteFrame = new Rectangle(561, 26, 119, 85);
                 }
                 else if (_frame == 5)
                 {
@@ -524,7 +561,7 @@ namespace Final_Project
                     _spriteFrame = new Rectangle(955, 43, 119, 85);
                 }
 
-                if (_frameTime >= 0.06)
+                if (_frameTime >= 0.2)
                 {
                     if (_frame >= 7)
                     {
@@ -711,25 +748,26 @@ namespace Final_Project
 
         public void TakeDamage()
         {
-            if (_state != BossState.Hurt || _state != BossState.HurtFlying)
+            if (_difficulty == 1) //Human
             {
-                if (_difficulty == 1) //Human
-                {
-                    _health -= 10;
-                }
-                else if (_difficulty == 2) //Bone Hunter
-                {
-                    _health -= 5;
-                }
-                else if (_difficulty == 3 || _difficulty == 4) //LBK and Must Die
-                {
-                    _health -= 2;
-                }
+                _health -= 10;
+            }
+            else if (_difficulty == 2) //Bone Hunter
+            {
+                _health -= 5;
+            }
+            else if (_difficulty == 3 || _difficulty == 4) //LBK and Must Die
+            {
+                _health -= 2;
+            }
 
-                if (_health == 50)
-                {
-                    phaseTwoTransition = true;
-                }
+            if (_health > 50)
+            {
+                _state = BossState.Hurt;
+            }
+            else if (_health <= 50)
+            {
+                _state = BossState.HurtFlying;
             }
         }
 

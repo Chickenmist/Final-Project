@@ -31,6 +31,7 @@ namespace Final_Project
         private bool _jumping;
         private bool _falling;
         private bool _attacking = false;
+        private bool _hitConnected = false;
 
         private int _difficulty; //1 = Human  2 = Bone Hunter  3 = LBK  4 = Must Die
         private int _health;
@@ -119,6 +120,7 @@ namespace Final_Project
                         if (_location.Bottom >= 490)
                         {
                             _speed.Y = 0;
+                            _location.Y = 490 - _location.Height;
                             _falling = false;
                             _jumping = false;
                         }
@@ -144,6 +146,13 @@ namespace Final_Project
                     {
                         _attackSeconds = 0;
                     }
+                }
+
+                if (playerHitbox.Intersects(boss.bossHurtbox))
+                {
+                    boss.TakeDamage();
+                    _hitConnected = true;
+                    
                 }
 
                 if (_attackCoolDown > 0)
@@ -391,6 +400,7 @@ namespace Final_Project
                     {
                         _frame = 0;
                         _attacking = false;
+                        _hitConnected = false;
                     }
                     else
                     {
@@ -492,13 +502,17 @@ namespace Final_Project
             {
                 playerHitbox = Rectangle.Empty;
             }
-            else if (_state == PlayerState.Attack && _facingRight)
+            else if (_state == PlayerState.Attack && _facingRight && _hitConnected == false)
             {
                 playerHitbox = new Rectangle(playerHurtbox.Right, _location.Y, 40, _location.Height);
             }
-            else if (_state == PlayerState.Attack && _facingLeft)
+            else if (_state == PlayerState.Attack && _facingLeft && _hitConnected == false)
             {
                 playerHitbox = new Rectangle(playerHurtbox.Left - 40, _location.Y, 40, _location.Height);
+            }
+            else if (_hitConnected)
+            {
+                playerHitbox = Rectangle.Empty;
             }
             //
         }

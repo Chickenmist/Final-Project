@@ -199,7 +199,7 @@ namespace Final_Project
             bossTextures.Add(bossVerticalBeamTexture);
             bossTextures.Add(bossDeadTexture);
 
-            boss = new Boss(bossTextures,  40, 40);
+            boss = new Boss(bossTextures, 40, floor.Y - 85);
             //
         }
 
@@ -367,10 +367,11 @@ namespace Final_Project
                     player.Damaged();
                 }
 
-                if (player.playerHitbox.Intersects(boss.bossHurtbox)) //Boss takes damage
-                {
-                    boss.TakeDamage();
-                }
+                //if (player.playerHitbox.Intersects(boss.bossHurtbox)) //Boss takes damage
+                //{
+                //    boss.TakeDamage();
+                //    player.playerHitbox = Rectangle.Empty;
+                //}
             }
 
             base.Update(gameTime);
@@ -455,7 +456,7 @@ namespace Final_Project
 
                 player.Draw(_spriteBatch);
                 //_spriteBatch.Draw(rectangleTexture, player.playerHurtbox, new Color(Color.Black, 0.5f));
-                //_spriteBatch.Draw(rectangleTexture, player.playerHitbox, new Color(Color.Red, 0.5f));
+                _spriteBatch.Draw(rectangleTexture, player.playerHitbox, new Color(Color.Red, 0.5f));
 
                 boss.Draw(_spriteBatch);
                 _spriteBatch.Draw(rectangleTexture, boss.bossHurtbox, new Color(Color.Black, 0.5f));
