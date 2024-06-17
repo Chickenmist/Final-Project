@@ -151,8 +151,6 @@ namespace Final_Project
                 if (playerHitbox.Intersects(boss.bossHurtbox))
                 {
                     boss.TakeDamage();
-                    _hitConnected = true;
-                    
                 }
 
                 if (_attackCoolDown > 0)
@@ -400,7 +398,6 @@ namespace Final_Project
                     {
                         _frame = 0;
                         _attacking = false;
-                        _hitConnected = false;
                     }
                     else
                     {
@@ -498,19 +495,15 @@ namespace Final_Project
             //
 
             //Hitbox
-            if (_state != PlayerState.Attack)
-            {
-                playerHitbox = Rectangle.Empty;
-            }
-            else if (_state == PlayerState.Attack && _facingRight && _hitConnected == false)
+            if (_state == PlayerState.Attack && _facingRight)
             {
                 playerHitbox = new Rectangle(playerHurtbox.Right, _location.Y, 40, _location.Height);
             }
-            else if (_state == PlayerState.Attack && _facingLeft && _hitConnected == false)
+            else if (_state == PlayerState.Attack && _facingLeft)
             {
                 playerHitbox = new Rectangle(playerHurtbox.Left - 40, _location.Y, 40, _location.Height);
             }
-            else if (_hitConnected)
+            else
             {
                 playerHitbox = Rectangle.Empty;
             }

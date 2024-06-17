@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,6 +29,7 @@ namespace Final_Project
 
         private bool _active;
         private bool _falling = false;
+        private bool _damaged;
         public bool phaseTwoTransition;
         private bool _dead;
 
@@ -44,42 +46,31 @@ namespace Final_Project
             _location = new Rectangle(x, y, 139, 105);
             _speed = new Vector2();
             _health = 100;
-            _coolDown = 3;
+            _coolDown = 1;
+            _dead = false;
+            _damaged = false;
         }
 
         public void Update(GameTime gameTime, Player player)
         {
-            _bossAction = 0;
-
-            if (_state != BossState.Dash && player.playerHurtbox.X < _location.X)
+            // Faces boss in correct direction
+            if (_state != BossState.Dash && player.playerHurtbox.X < _location.X - 73)
             {
                 _facingLeft = true;
             }
-            else if (_state != BossState.Dash && player.playerHurtbox.X > _location.X)
+            else if (_state != BossState.Dash && player.playerHurtbox.X > _location.X + 73)
             {
                 _facingLeft = false;
             }
 
             if (_health > 50) //Phase One
             {
+                //Boss needs a new action
                 if (_active == false && _coolDown == 0)
                 {
-                    //_bossAction = _random.Next(1, 4);
-
                     _frame = 0;
 
-                    if (_bossAction == 1) //Slash attack
-                    {
-                        _state = BossState.SlashOne;
-                    }
-                    else if (_bossAction == 2) //Dash
-                    {
-                        _state = BossState.Dash;
-                    }
-                    else if (_bossAction == 3) //Lighting blast
-                    {
-                        _state = BossState.LightningBolt;
-                    }
+                    _state = (BossState)_random.Next(1, 4);
 
                     _active = true;
                 }
@@ -115,6 +106,7 @@ namespace Final_Project
                 else if (_state == BossState.LightningBolt || _state == BossState.GroundIdle)
                 {
                     _speed.X = 0;
+                    _speed.Y = 0;
                 }
                 else if (_state == BossState.Hurt)
                 {
@@ -131,27 +123,31 @@ namespace Final_Project
                         _speed.X = -2;
                     }
 
-                    if (_location.Y > 200 && _falling == false)
+                    // Still jumping
+                    if (_location.Top > 290 && !_falling)
                     {
                         _speed.Y = -2;
                     }
-                    else if (_location.Y <= 200 && _falling == false)
+                    // Reached top of jump, begin falling
+                    else if (_location.Top <= 290)
                     {
-                        _falling = true;
                         _speed.Y = 2;
+                        _falling = true;
                     }
-                    else if (_location.Bottom >= 490 && _falling)
+                    else if (_location.Bottom >= 490 && _falling) //Landed
                     {
                         _falling = false;
-                        _speed.Y = 0;
-                        _location.Y = 490 - bossHurtbox.Height;
+                        _damaged = false;
+                        _state = BossState.GroundIdle;
+                        _location.Y = 490 - _location.Height;
                         StartCooldown();
                     }
                 }
-                else if (_state == BossState.GroundIdle)
+
+                if (bossHitbox.Intersects(player.playerHurtbox)) //Damaged Player
                 {
-                    _speed.Y = 0;
-                    _speed.X = 0;
+                    _frame = 0;
+                    _state = BossState.Jump;
                 }
 
             }
@@ -197,11 +193,6 @@ namespace Final_Project
                 _coolDown = 0;
             }
 
-            //if(player.playerHitbox.Intersects(bossHurtbox))
-            //{
-            //    TakeDamage();
-            //}
-
             Move();
             GenerateBoxes();
 
@@ -224,7 +215,6 @@ namespace Final_Project
                     if (_state == BossState.Dash) //Ends the dash attack
                     {
                         StartCooldown();
-                        _active = false;
                     }
                 }
                 else if (_location.Right > 960)
@@ -245,7 +235,6 @@ namespace Final_Project
                     if (_state == BossState.Dash) //Ends the dash attack
                     {
                         StartCooldown();
-                        _active = false;
                     }
                 }
             }
@@ -265,6 +254,8 @@ namespace Final_Project
             {
                 _coolDown = 2;
             }
+
+            _active = false;
         }
 
         public int GetDifficulty
@@ -403,7 +394,6 @@ namespace Final_Project
                     {
                         _frame = 0;
                         StartCooldown();
-                        _active = false;
                     }
                     else
                     {
@@ -517,7 +507,6 @@ namespace Final_Project
                     {
                         _frame = 0;
                         StartCooldown();
-                        _active = false;
                     }
                     else
                     {
@@ -566,8 +555,6 @@ namespace Final_Project
                     if (_frame >= 7)
                     {
                         _frame = 0;
-                        StartCooldown();
-                        _active = false;
                     }
                     else
                     {
@@ -592,7 +579,7 @@ namespace Final_Project
                     _spriteFrame = new Rectangle(296, 43, 119, 85);
                 }
 
-                if (_frameTime >= 0.06)
+                if (_frameTime >= 0.07)
                 {
                     if (_frame >= 2)
                     {
@@ -665,10 +652,12 @@ namespace Final_Project
         {
             if (_facingLeft)
             {
-                bossHurtbox = new Rectangle(_location.X + 73, _location.Y + 22, _location.Width - 73, _location.Height -22); //Hurtbox size never needs to change
-                bossHitbox = Rectangle.Empty;
-                
-                if (_state == BossState.GroundIdle || _state == BossState.FlyingIdle)
+                if (_damaged == false)
+                {
+                    bossHurtbox = new Rectangle(_location.X + 73, _location.Y + 22, _location.Width - 73, _location.Height - 22); //Hurtbox size never needs to change
+                }
+
+                if (_state == BossState.GroundIdle || _state == BossState.FlyingIdle || _state == BossState.Jump)
                 {
                     bossHitbox = Rectangle.Empty;
                 }
@@ -706,9 +695,12 @@ namespace Final_Project
             }
             else
             {
-                bossHurtbox = new Rectangle(_location.X, _location.Y + 22, _location.Width - 73, _location.Height - 22); //Hurtbox size never needs to change
+                if (_damaged == false)
+                {
+                    bossHurtbox = new Rectangle(_location.X, _location.Y + 22, _location.Width - 73, _location.Height - 22); //Hurtbox size never needs to change
+                }
 
-                if (_state == BossState.GroundIdle || _state == BossState.FlyingIdle)
+                if (_state == BossState.GroundIdle || _state == BossState.FlyingIdle || _state == BossState.Jump)
                 {
                     bossHitbox = Rectangle.Empty;
                 }
@@ -751,6 +743,9 @@ namespace Final_Project
             if (_difficulty == 1) //Human
             {
                 _health -= 10;
+                _damaged = true;
+                bossHurtbox = Rectangle.Empty;
+
             }
             else if (_difficulty == 2) //Bone Hunter
             {

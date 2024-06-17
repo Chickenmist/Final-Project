@@ -182,7 +182,7 @@ namespace Final_Project
             playerTextures.Add(playerAttackTexture);
             playerTextures.Add(playerJumpTexture);
             playerTextures.Add(playerDeathTexture);
-            player = new Player(playerTextures, 50, floor.Y - 75);
+            player = new Player(playerTextures, 50, floor.Y - 95);
             //
 
             //Boss
@@ -199,7 +199,7 @@ namespace Final_Project
             bossTextures.Add(bossVerticalBeamTexture);
             bossTextures.Add(bossDeadTexture);
 
-            boss = new Boss(bossTextures, 40, floor.Y - 85);
+            boss = new Boss(bossTextures, 100, floor.Y - 105);
             //
         }
 
@@ -455,7 +455,7 @@ namespace Final_Project
                 _spriteBatch.Draw(battleBackgroundTexture, background, Color.White);
 
                 player.Draw(_spriteBatch);
-                //_spriteBatch.Draw(rectangleTexture, player.playerHurtbox, new Color(Color.Black, 0.5f));
+                _spriteBatch.Draw(rectangleTexture, player.playerHurtbox, new Color(Color.Black, 0.5f));
                 _spriteBatch.Draw(rectangleTexture, player.playerHitbox, new Color(Color.Red, 0.5f));
 
                 boss.Draw(_spriteBatch);
