@@ -48,26 +48,26 @@ namespace Final_Project
 
         public void Update(GameTime gameTime, KeyboardState keyboardState, MouseState mouseState, Boss boss)
         {
-            if (boss.phaseTwoTransition)
+            if (boss.phaseTwoTransition) //Phase two transition
             {
                 _state = PlayerState.Idle;
             }
-            else
+            else //Phases one and two
             {
-                if (_state != PlayerState.Attack || _state != PlayerState.Dead || _state != PlayerState.Hurt)
+                if (_state != PlayerState.Attack || _state != PlayerState.Dead || _state != PlayerState.Hurt) //Prevents animations from overriding
                 {
                     _state = PlayerState.Idle;
                 }
 
-                if (_state == PlayerState.Hurt)
+                if (_state == PlayerState.Hurt) //Player has been damaged
                 {
                     _speed.X = 0;
                 }
-
+                
                 //Jumping
                 if (keyboardState.IsKeyDown(Keys.Space) && _state != PlayerState.Hurt)
                 {
-                    if (_jumping == false)
+                    if (!_jumping)
                     {
                         _state = PlayerState.Jumping;
 
@@ -77,20 +77,20 @@ namespace Final_Project
                     {
                         _state = PlayerState.Jumping;
 
-                        if (_location.Y > 230 && _falling == false)
+                        if (_location.Y > 230 && !_falling) //Jumping
                         {
                             _speed.Y = -6;
                         }
-                        else if (_location.Y <= 230 && _falling == false || keyboardState.IsKeyUp(Keys.Space) && _falling == false)
+                        else if (_location.Y <= 230 && !_falling || keyboardState.IsKeyUp(Keys.Space) && !_falling) //Jump peak reached
                         {
                             _falling = true;
                         }
 
-                        if (_falling == true)
+                        if (_falling) //Started falling
                         {
                             _speed.Y = 6;
 
-                            if (_location.Bottom >= 490)
+                            if (_location.Bottom >= 490) //Landed
                             {
                                 _speed.Y = 0;
                                 _falling = false;
@@ -104,20 +104,20 @@ namespace Final_Project
                 {
                     _state = PlayerState.Jumping;
 
-                    if (_location.Y > 320 && _falling == false)
+                    if (_location.Y > 320 && !_falling) //Jumping
                     {
                         _speed.Y = -6;
                     }
-                    else if (_location.Y <= 320 && _falling == false)
+                    else if (_location.Y <= 320 && !_falling) //Reached jump peak
                     {
                         _falling = true;
                     }
 
-                    if (_falling == true)
+                    if (_falling == true) //Falling back to the ground
                     {
                         _speed.Y = 6;
 
-                        if (_location.Bottom >= 490)
+                        if (_location.Bottom >= 490) //Landed
                         {
                             _speed.Y = 0;
                             _location.Y = 490 - _location.Height;
@@ -129,7 +129,7 @@ namespace Final_Project
                 //
 
                 //Attacking
-                if (mouseState.LeftButton == ButtonState.Pressed && _attacking == false && _attackCoolDown == 0 && _state != PlayerState.Hurt) //Attack started
+                if (mouseState.LeftButton == ButtonState.Pressed && !_attacking && _attackCoolDown == 0 && _state != PlayerState.Hurt) //Attack started
                 {
                     _state = PlayerState.Attack;
                     _frame = 0;
@@ -137,18 +137,19 @@ namespace Final_Project
                     _attackCoolDown = 1.5f;
                 }
 
-                if (_attacking == true) //Attacking
+                if (_attacking) //Attacking
                 {
                     _state = PlayerState.Attack;
 
                     _attackSeconds += (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    if (_attacking == false)
+
+                    if (!_attacking)
                     {
                         _attackSeconds = 0;
                     }
                 }
 
-                if (playerHitbox.Intersects(boss.bossHurtbox))
+                if (playerHitbox.Intersects(boss.bossHurtbox)) //Hits the boss
                 {
                     boss.TakeDamage();
                 }
@@ -171,7 +172,7 @@ namespace Final_Project
 
                     _speed.X = -8.5f;
 
-                    if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead && _state != PlayerState.Hurt)
+                    if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead && _state != PlayerState.Hurt) //Prevents animations from overriding
                     {
                         _state = PlayerState.Run;
                     }
@@ -183,7 +184,7 @@ namespace Final_Project
 
                     _speed.X = 8.5f;
 
-                    if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead && _state != PlayerState.Hurt)
+                    if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead && _state != PlayerState.Hurt) //Prevents animations from overriding
                     {
                         _state = PlayerState.Run;
                     }
@@ -195,7 +196,7 @@ namespace Final_Project
 
                     _speed.X = -4.5f;
 
-                    if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead && _state != PlayerState.Hurt)
+                    if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead && _state != PlayerState.Hurt) //Prevents animations from overriding
                     {
                         _state = PlayerState.Walk;
                     }
@@ -207,14 +208,14 @@ namespace Final_Project
 
                     _speed.X = 4.5f;
 
-                    if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead && _state != PlayerState.Hurt)
+                    if (_state != PlayerState.Attack && _state != PlayerState.Jumping && _state != PlayerState.Dead && _state != PlayerState.Hurt) //Prevents animations from overriding
                     {
                         _state = PlayerState.Walk;
                     }
                 }
             }
             
-            if (_state == PlayerState.Idle)
+            if (_state == PlayerState.Idle) //No player input
             {
                 _speed.X = 0;
             }
@@ -415,35 +416,35 @@ namespace Final_Project
 
             if (_facingLeft)
             {
-                if (_location.Left < -40)
+                if (_location.Left < -40) //Prevents the player from moving off the left egde of the screen
                 {
                     _location.X = -40;
                 }
-                else if (_location.Right > 960)
+                else if (_location.Right > 960) //Makes the player sprite stay against the right edge of the screen when turning there
                 {
                     _location.X = 960 - _location.Width;
                 }
             }
             else if (_facingRight)
             {
-                if (_location.Left < 0)
+                if (_location.Left < 0) //Makes the player sprite stay against the left edge of the screen when turning there
                 {
                     _location.X = 0;
                 }
-                else if (_location.Right > 1000)
+                else if (_location.Right > 1000) //Prevents the player from moving off the right edge of the screen
                 {
                     _location.X = 1000 - _location.Width;
                 }
             }
         }
 
-        public int GetDifficulty
+        public int GetDifficulty //Gets the difficulty from the game
         {
             get { return _difficulty; }
             set { _difficulty = value; }
         }
 
-        public void Damaged()
+        public void Damaged() //Player takes damage
         {
             if (_difficulty == 1) //Human
             {
@@ -465,15 +466,15 @@ namespace Final_Project
             UpdateHealth();
         }
 
-        private void UpdateHealth()
+        private void UpdateHealth() //This is to update the health bar
         {
             
         }
 
-        private void GenerateBoxes()
+        private void GenerateBoxes() //Generates the hurtbox and hitbox
         {
             //Hurtbox
-            if (_state != PlayerState.Attack)
+            if (_state != PlayerState.Hurt) //
             {
                 if (_facingLeft)
                 {
@@ -484,26 +485,18 @@ namespace Final_Project
                     playerHurtbox = new Rectangle(_location.X, _location.Y, _location.Width - 40, _location.Height);
                 }
             }
-            else if (_state == PlayerState.Attack && _facingRight)
-            {
-                playerHurtbox = new Rectangle(_location.X, _location.Y, _location.Width - 40, _location.Height);
-            }
-            else if (_state == PlayerState.Attack && _facingLeft)
-            {
-                playerHurtbox = new Rectangle(_location.X + 40, _location.Y, _location.Width - 40, _location.Height);
-            }
             //
 
             //Hitbox
-            if (_state == PlayerState.Attack && _facingRight)
+            if (_state == PlayerState.Attack && _facingRight) //Creates the hitbox to the right of the player
             {
                 playerHitbox = new Rectangle(playerHurtbox.Right, _location.Y, 40, _location.Height);
             }
-            else if (_state == PlayerState.Attack && _facingLeft)
+            else if (_state == PlayerState.Attack && _facingLeft) //Creates the hitbox to the left of the player
             {
                 playerHitbox = new Rectangle(playerHurtbox.Left - 40, _location.Y, 40, _location.Height);
             }
-            else
+            else //Removes the hitbox when the player isn't attacking
             {
                 playerHitbox = Rectangle.Empty;
             }
@@ -516,7 +509,7 @@ namespace Final_Project
             {
                 spriteBatch.Draw(_textures[(int)_state], _location, _spriteFrame, Color.White, 0f, new Vector2(0,0), SpriteEffects.FlipHorizontally, 0f);
             }
-            else if ( _facingRight)
+            else if (_facingRight)
             {
                 spriteBatch.Draw(_textures[(int)_state], _location, _spriteFrame, Color.White);
             }

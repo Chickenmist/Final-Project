@@ -19,7 +19,6 @@ namespace Final_Project
         public Rectangle bossHurtbox; //damageable area
 
         private Random _random = new Random();
-        private int _bossAction;
 
         BossState _state;
 
@@ -66,7 +65,7 @@ namespace Final_Project
             if (_health > 50) //Phase One
             {
                 //Boss needs a new action
-                if (_active == false && _coolDown == 0)
+                if (!_active && _coolDown == 0)
                 {
                     _frame = 0;
 
@@ -116,11 +115,11 @@ namespace Final_Project
                 {
                     if (_facingLeft)
                     {
-                        _speed.X = 2;
+                        _speed.X = 5;
                     }
                     else
                     {
-                        _speed.X = -2;
+                        _speed.X = -5;
                     }
 
                     // Still jumping
@@ -140,14 +139,19 @@ namespace Final_Project
                         _damaged = false;
                         _state = BossState.GroundIdle;
                         _location.Y = 490 - _location.Height;
-                        StartCooldown();
+
+                        if (!_damaged) //If the jump was started after attacking
+                        {
+                            StartCooldown();
+                        }
                     }
                 }
 
-                if (bossHitbox.Intersects(player.playerHurtbox)) //Damaged Player
+                if (bossHitbox.Intersects(player.playerHurtbox) || bossHurtbox.Intersects(player.playerHurtbox)) //Damaged Player
                 {
                     _frame = 0;
                     _state = BossState.Jump;
+                    player.Damaged();
                 }
 
             }
@@ -166,7 +170,7 @@ namespace Final_Project
                     phaseTwoTransition = false;
                 }
             }
-            else if (_health <= 50 && phaseTwoTransition == false) //Phase Two
+            else if (_health <= 50 && !phaseTwoTransition) //Phase Two
             {
 
             }
@@ -175,7 +179,7 @@ namespace Final_Project
 
             }
 
-            if (_coolDown > 0)
+            if (_coolDown > 0 && _state != BossState.Hurt && _state != BossState.Jump) // Makes the boss idle on it's cooldown
             {
                 if (_health > 50)
                 {
@@ -240,31 +244,31 @@ namespace Final_Project
             }
         }
 
-        public void StartCooldown()
+        public void StartCooldown() //Decides the cooldown time
         {
             if (_difficulty == 1) //Human
             {
-                _coolDown = 4;
+                _coolDown = 2;
             }
             else if (_difficulty == 2) //Bone Hunter
             {
-                _coolDown = 3;
+                _coolDown = 1.5f;
             }
             else if (_difficulty == 3 || _difficulty == 4) //LBK and Must Die
             {
-                _coolDown = 2;
+                _coolDown = 1;
             }
 
             _active = false;
         }
 
-        public int GetDifficulty
+        public int GetDifficulty //Gets the difficulty from the game
         {
             get { return _difficulty; }
             set { _difficulty = value; }
         }
 
-        private void AnimateFrame()
+        private void AnimateFrame() //Handles the animations
         {
             if (_state == BossState.GroundIdle) //Phase one idle (grounded idle)
             {
@@ -564,7 +568,7 @@ namespace Final_Project
                     _frameTime = 0;
                 }
             }
-            else if (_state == BossState.Hurt)
+            else if (_state == BossState.Hurt) //Taking damage on the ground
             {
                 if (_frame == 0)
                 {
@@ -638,6 +642,10 @@ namespace Final_Project
                     _frameTime = 0;
                 }
             }
+            else if (_state == BossState.HurtFlying) //Taking damage while flying
+            {
+
+            }
             else if (_state == BossState.HorizontalBeam) //Horizontal beam
             {
 
@@ -648,15 +656,18 @@ namespace Final_Project
             }
         }
 
-        private void GenerateBoxes()
+        private void GenerateBoxes() //Creates the hurtbox and hitboxes
         {
             if (_facingLeft)
             {
-                if (_damaged == false)
+                //Hurtbox
+                if (!_damaged)
                 {
                     bossHurtbox = new Rectangle(_location.X + 73, _location.Y + 22, _location.Width - 73, _location.Height - 22); //Hurtbox size never needs to change
                 }
+                //
 
+                //Hitboxes. Since in phase two the boss attacks with a beam, there are no hitboxes for phase two here
                 if (_state == BossState.GroundIdle || _state == BossState.FlyingIdle || _state == BossState.Jump)
                 {
                     bossHitbox = Rectangle.Empty;
@@ -692,14 +703,18 @@ namespace Final_Project
                         bossHitbox = new Rectangle(bossHurtbox.Left - 107, bossHurtbox.Y, 107, bossHurtbox.Height);
                     }   
                 }
+                //
             }
             else
             {
-                if (_damaged == false)
+                //Hurtbox
+                if (!_damaged)
                 {
                     bossHurtbox = new Rectangle(_location.X, _location.Y + 22, _location.Width - 73, _location.Height - 22); //Hurtbox size never needs to change
                 }
+                //
 
+                //Hitboxes. Since in phase two the boss attacks with a beam, there are no hitboxes for phase two here
                 if (_state == BossState.GroundIdle || _state == BossState.FlyingIdle || _state == BossState.Jump)
                 {
                     bossHitbox = Rectangle.Empty;
@@ -735,17 +750,15 @@ namespace Final_Project
                         bossHitbox = new Rectangle(bossHurtbox.Left, bossHurtbox.Y, 107, bossHurtbox.Height);
                     }
                 }
+                //
             }
         }
 
-        public void TakeDamage()
+        public void TakeDamage() //Boss takes damage
         {
             if (_difficulty == 1) //Human
             {
                 _health -= 10;
-                _damaged = true;
-                bossHurtbox = Rectangle.Empty;
-
             }
             else if (_difficulty == 2) //Bone Hunter
             {
@@ -756,14 +769,21 @@ namespace Final_Project
                 _health -= 2;
             }
 
-            if (_health > 50)
+            if (_health > 50) //Phase one
             {
                 _state = BossState.Hurt;
             }
-            else if (_health <= 50)
+            else if (_health < 50) //Phase two
             {
                 _state = BossState.HurtFlying;
             }
+            else if (_health == 50) //Transitions into phase two
+            {
+                phaseTwoTransition = true;
+            }
+
+            _damaged = true;
+            bossHurtbox = Rectangle.Empty;
         }
 
         public void Draw(SpriteBatch spriteBatch)

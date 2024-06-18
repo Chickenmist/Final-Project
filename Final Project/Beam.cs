@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace Final_Project
 {
-    internal class Beam
+    public class Beam
     {
+        public Beam()
+        {
+
+        }
     }
 }

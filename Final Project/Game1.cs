@@ -65,6 +65,7 @@ namespace Final_Project
     {
         Player player;
         Boss boss;
+        Beam beam;
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -172,7 +173,6 @@ namespace Final_Project
             boneHunterRectangle = new Rectangle(370, 64, 128, 32);
             lBKRectangle = new Rectangle(370, 96, 128, 32);
             mustDieRectangle = new Rectangle(370, 128, 128, 32);
-
             base.Initialize();
             
             //Player
@@ -199,7 +199,7 @@ namespace Final_Project
             bossTextures.Add(bossVerticalBeamTexture);
             bossTextures.Add(bossDeadTexture);
 
-            boss = new Boss(bossTextures, 100, floor.Y - 105);
+            boss = new Boss(bossTextures, 830, floor.Y - 105);
             //
         }
 
@@ -357,21 +357,10 @@ namespace Final_Project
 
             }
             else if (currentScreen == Screen.FightScreen)
-            {
+            {   
                 player.Update(gameTime, keyboardState, mouseState, boss);
 
                 boss.Update(gameTime, player);
-
-                if (player.playerHurtbox.Intersects(boss.bossHitbox) || player.playerHurtbox.Intersects(boss.bossHurtbox)) //Player takes damage
-                {
-                    player.Damaged();
-                }
-
-                //if (player.playerHitbox.Intersects(boss.bossHurtbox)) //Boss takes damage
-                //{
-                //    boss.TakeDamage();
-                //    player.playerHitbox = Rectangle.Empty;
-                //}
             }
 
             base.Update(gameTime);
