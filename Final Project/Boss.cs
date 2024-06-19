@@ -644,15 +644,113 @@ namespace Final_Project
             }
             else if (_state == BossState.HurtFlying) //Taking damage while flying
             {
+                if (_frame == 0)
+                {
+                    _spriteFrame = new Rectangle(121, 43, 119, 85);
+                }
+                else if ( _frame == 1)
+                {
+                    _spriteFrame = new Rectangle(249, 43, 119, 85);
+                }
+                else if (_frame == 2)
+                {
+                    _spriteFrame = new Rectangle(378, 43, 119, 85);
+                }
 
+                if (_frameTime >= 0.07)
+                {
+                    if (_frame >= 2)
+                    {
+                        _frame = 0;
+                    }
+                    else
+                    {
+                        _frame++;
+                    }
+                    _frameTime = 0;
+                }
             }
             else if (_state == BossState.HorizontalBeam) //Horizontal beam
             {
+                if ( _frame == 0)
+                {
+                    _spriteFrame = new Rectangle(34, 43, 119, 85);
+                }
+                else if (_frame == 1)
+                {
+                    _spriteFrame = new Rectangle(162, 43, 119, 85);
+                }
+                else if (_frame == 2)
+                {
+                    _spriteFrame = new Rectangle(291, 43, 119, 85);
+                }
+                else if (_frame == 3)
+                {
+                    _spriteFrame = new Rectangle(418, 43, 119, 85);
+                }
+                else if (_frame == 4)
+                {
+                    _spriteFrame = new Rectangle(547, 43, 119, 85);
+                }
+                else if ( _frame == 5)
+                {
+                    _spriteFrame = new Rectangle(675, 43, 119, 85);
+                }
+                else if (_frame == 6)
+                {
+                    _spriteFrame = new Rectangle(803, 43, 119, 85);
+                }
 
+                if (_frameTime >= 0.1)
+                {
+                    if (_frame >= 6)
+                    {
+                        _frame = 0;
+                    }
+                    else
+                    {
+                        _frame++;
+                    }
+
+                    _frameTime = 0;
+                }
             }
             else if (_state == BossState.VerticalBeam) //Vertical beam
             {
+                if (_frame == 0)
+                {
+                    _spriteFrame = new Rectangle(39, 43, 119, 85);
+                }
+                else if (_frame == 1)
+                {
+                    _spriteFrame = new Rectangle(169, 43, 119, 85);
+                }
+                else if (_frame == 2)
+                {
+                    _spriteFrame = new Rectangle(293, 43, 119, 85);
+                }
+                else if (_frame == 3)
+                {
+                    _spriteFrame = new Rectangle(420, 43, 119, 85);
+                }
+                else if (_frame == 4)
+                {
+                    _spriteFrame = new Rectangle(546, 43, 119, 85);
+                }
 
+                if (_frameTime >= 0.1)
+                {
+                    if (_frame >= 4)
+                    {
+                        _frame = 0;
+                    }
+                    else
+                    {
+                        _frame++;
+                    }
+
+                    _frameTime = 0;
+                }
             }
         }
 
