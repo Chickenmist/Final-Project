@@ -46,6 +46,11 @@ namespace Final_Project
             _health = 100;
         }
 
+        public int Health
+        {
+            get { return _health; }
+        }
+
         public void Update(GameTime gameTime, KeyboardState keyboardState, MouseState mouseState, Boss boss)
         {
             if (boss.phaseTwoTransition) //Phase two transition
@@ -463,11 +468,6 @@ namespace Final_Project
                 _health = 0;
             }
 
-            UpdateHealth();
-        }
-
-        private void UpdateHealth() //This is to update the health bar
-        {
             
         }
 

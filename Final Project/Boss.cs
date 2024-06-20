@@ -39,6 +39,10 @@ namespace Final_Project
 
         private float _coolDown;
 
+        private int _side; //This is for phase two. The boss will randomly decide which side it wants to be on. 1 means left side, 2 means right side
+
+        private bool _firedBeam;
+
         public Boss(List<Texture2D> textures,int x, int y)
         {
             _textures = textures;
@@ -48,9 +52,10 @@ namespace Final_Project
             _coolDown = 1;
             _dead = false;
             _damaged = false;
+            _firedBeam = false;
         }
 
-        public void Update(GameTime gameTime, Player player)
+        public void Update(GameTime gameTime, Player player, Beam beam)
         {
             // Faces boss in correct direction
             if (_state != BossState.Dash && player.playerHurtbox.X < _location.X - 73)
@@ -163,7 +168,7 @@ namespace Final_Project
                     _state = BossState.Jump;
                     _frame = 2;
                 }
-                else if (_location.Y <= 250)
+                else if (_location.Y <= 200)
                 {
                     _speed.Y = 0;
                     _state = BossState.FlyingIdle;
@@ -172,14 +177,94 @@ namespace Final_Project
             }
             else if (_health <= 50 && !phaseTwoTransition) //Phase Two
             {
+                //Boss needs a new action
+                if (!_active && _coolDown == 0)
+                {
+                    _frame = 0;
 
+                    _state = (BossState)_random.Next(9, 11);
+
+                    _active = true;
+                }
+                
+                if (_state == BossState.HorizontalBeam) //Horizontal beam attack
+                {
+                    _side = _random.Next(1, 3);
+                    
+                    if (_side == 1) //Boss is on the left side
+                    {
+                        _location.X = 0;
+
+                        if (_location.Y < 490 - _location.Height)
+                        {
+                            _speed.Y = 2;
+                        }
+                        else if (_location.Y >= 490 - _location.Height)
+                        {
+                            _speed.Y = 0;
+                            _location.Y = 490 - _location.Height;
+
+                            if (_firedBeam)
+                            {
+                                beam.FiredHorizontalLeft();
+                                _firedBeam = false;
+                            }
+                        }
+                    }
+                    else //Boss is on the right side
+                    {
+                        _location.X = 960 - _location.Width;
+
+                        if (_location.Y < 490 - _location.Height)
+                        {
+                            _speed.Y = 2;
+                        }
+                        else if (_location.Y >= 490 - _location.Height)
+                        {
+                            _speed.Y = 0;
+                            _location.Y = 490 - _location.Height;
+
+                            if (_firedBeam)
+                            {
+                                beam.FiredHorizontalRight();
+                                _firedBeam = false;
+                            }
+                        }
+                    }
+                    
+                    
+                    
+                }
+                else if (_state == BossState.VerticalBeam)// vertical beam attack
+                {
+                    _side = _random.Next(1, 3);
+
+                    if (_side == 1)
+                    {
+                        _location.X = 0;
+                    }
+                    else
+                    {
+                        _location.X = 960 - _location.Width;
+                    }
+
+                    if (_firedBeam)
+                    {
+                        beam.FiredVertical();
+                        _firedBeam = false;
+                    }
+                    else
+                    {
+                        beam.PrepVertical();
+                    }
+                }
             }
             else if (_health == 0) //Dead
             {
-
+                _state = BossState.Dead;
             }
 
-            if (_coolDown > 0 && _state != BossState.Hurt && _state != BossState.Jump) // Makes the boss idle on it's cooldown
+            if (_coolDown > 0 && _state != BossState.Hurt && _state != BossState.Jump) //Makes the boss idle on it's cooldown
             {
                 if (_health > 50)
                 {
@@ -680,9 +765,10 @@ namespace Final_Project
                 {
                     _spriteFrame = new Rectangle(162, 43, 119, 85);
                 }
-                else if (_frame == 2)
+                else if (_frame == 2) //Beam gets launched
                 {
                     _spriteFrame = new Rectangle(291, 43, 119, 85);
+                    _firedBeam = true; //Fires the beam
                 }
                 else if (_frame == 3)
                 {
@@ -706,6 +792,7 @@ namespace Final_Project
                     if (_frame >= 6)
                     {
                         _frame = 0;
+                        StartCooldown();
                     }
                     else
                     {
@@ -733,9 +820,10 @@ namespace Final_Project
                 {
                     _spriteFrame = new Rectangle(420, 43, 119, 85);
                 }
-                else if (_frame == 4)
+                else if (_frame == 4) //Launch beams
                 {
                     _spriteFrame = new Rectangle(546, 43, 119, 85);
+                    _firedBeam = true;
                 }
 
                 if (_frameTime >= 0.1)
@@ -743,6 +831,7 @@ namespace Final_Project
                     if (_frame >= 4)
                     {
                         _frame = 0;
+                        StartCooldown();
                     }
                     else
                     {
@@ -751,6 +840,10 @@ namespace Final_Project
 
                     _frameTime = 0;
                 }
+            }
+            else if (_state == BossState.Dead)
+            {
+
             }
         }
 

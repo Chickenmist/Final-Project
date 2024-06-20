@@ -74,6 +74,8 @@ namespace Final_Project
 
         Screen currentScreen;
 
+        int currentPlayerHealth;
+
         KeyboardState keyboardState;
         MouseState mouseState;
         //PlayerState playerState;
@@ -106,6 +108,10 @@ namespace Final_Project
         Texture2D bossPhaseTwoIdleTexture;
         Texture2D bossHorizontalBeamTexture;
         Texture2D bossVerticalBeamTexture;
+        //
+
+        //Beam texture
+        Texture2D beamTexture;
         //
 
         //Background and floor
@@ -201,6 +207,9 @@ namespace Final_Project
 
             boss = new Boss(bossTextures, 830, floor.Y - 105);
             //
+
+            //Beam
+            beam = new Beam(beamTexture, 0, 0);
         }
 
         protected override void LoadContent()
@@ -231,6 +240,10 @@ namespace Final_Project
             bossHorizontalBeamTexture = Content.Load<Texture2D>("Boss Horizontal Beam");
             bossVerticalBeamTexture = Content.Load<Texture2D>("Boss Vertical Beam");
             bossDeadTexture = Content.Load<Texture2D>("Boss Dead");
+            //
+
+            //Beam Sprite
+            beamTexture = Content.Load<Texture2D>("Beam Sprite");
             //
 
             //Background Sprites
@@ -360,7 +373,9 @@ namespace Final_Project
             {   
                 player.Update(gameTime, keyboardState, mouseState, boss);
 
-                boss.Update(gameTime, player);
+                boss.Update(gameTime, player, beam);
+
+                beam.Update(gameTime, boss, player);
             }
 
             base.Update(gameTime);
@@ -457,7 +472,7 @@ namespace Final_Project
             }
             else if (currentScreen == Screen.LoseScreen)
             {
-
+                
             }
 
             _spriteBatch.End();
