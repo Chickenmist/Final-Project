@@ -31,10 +31,6 @@ namespace Final_Project
         SlashTwo,
         Jump,
         Hurt,
-        HurtFlying,
-        FlyingIdle,
-        HorizontalBeam,
-        VerticalBeam,
 
         Dead
     }
@@ -65,7 +61,6 @@ namespace Final_Project
     {
         Player player;
         Boss boss;
-        Beam beam;
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -207,9 +202,6 @@ namespace Final_Project
 
             boss = new Boss(bossTextures, 830, floor.Y - 105);
             //
-
-            //Beam
-            beam = new Beam(beamTexture, 0, 0);
         }
 
         protected override void LoadContent()
@@ -240,10 +232,6 @@ namespace Final_Project
             bossHorizontalBeamTexture = Content.Load<Texture2D>("Boss Horizontal Beam");
             bossVerticalBeamTexture = Content.Load<Texture2D>("Boss Vertical Beam");
             bossDeadTexture = Content.Load<Texture2D>("Boss Dead");
-            //
-
-            //Beam Sprite
-            beamTexture = Content.Load<Texture2D>("Beam Sprite");
             //
 
             //Background Sprites
@@ -373,9 +361,7 @@ namespace Final_Project
             {   
                 player.Update(gameTime, keyboardState, mouseState, boss);
 
-                boss.Update(gameTime, player, beam);
-
-                beam.Update(gameTime, boss, player);
+                boss.Update(gameTime, player);
             }
 
             base.Update(gameTime);
@@ -465,8 +451,6 @@ namespace Final_Project
                 boss.Draw(_spriteBatch);
                 _spriteBatch.Draw(rectangleTexture, boss.bossHurtbox, new Color(Color.Black, 0.5f));
                 _spriteBatch.Draw(rectangleTexture, boss.bossHitbox, new Color(Color.Red, 0.5f));
-
-                beam.Draw(_spriteBatch);
             }
             else if (currentScreen == Screen.WinScreen)
             {
