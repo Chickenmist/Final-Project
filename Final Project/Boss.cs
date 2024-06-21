@@ -42,6 +42,7 @@ namespace Final_Project
         private int _side; //This is for phase two. The boss will randomly decide which side it wants to be on. 1 means left side, 2 means right side
 
         private bool _firedBeam;
+        private bool _landed;
 
         public Boss(List<Texture2D> textures,int x, int y)
         {
@@ -53,22 +54,23 @@ namespace Final_Project
             _dead = false;
             _damaged = false;
             _firedBeam = false;
+            _landed = false;
         }
 
         public void Update(GameTime gameTime, Player player, Beam beam)
         {
-            // Faces boss in correct direction
-            if (_state != BossState.Dash && player.playerHurtbox.X < _location.X - 73)
-            {
-                _facingLeft = true;
-            }
-            else if (_state != BossState.Dash && player.playerHurtbox.X > _location.X + 73)
-            {
-                _facingLeft = false;
-            }
-
             if (_health > 50) //Phase One
             {
+                // Faces boss in correct direction
+                if (_state != BossState.Dash && player.playerHurtbox.X < _location.X - 73)
+                {
+                    _facingLeft = true;
+                }
+                else if (_state != BossState.Dash && player.playerHurtbox.X > _location.X + 73)
+                {
+                    _facingLeft = false;
+                }
+                
                 //Boss needs a new action
                 if (!_active && _coolDown == 0)
                 {
@@ -184,23 +186,25 @@ namespace Final_Project
 
                     _state = (BossState)_random.Next(9, 11);
 
+                    _side = _random.Next(1, 3);
+
                     _active = true;
                 }
                 
                 if (_state == BossState.HorizontalBeam) //Horizontal beam attack
-                {
-                    _side = _random.Next(1, 3);
-                    
+                { 
                     if (_side == 1) //Boss is on the left side
                     {
+                        _facingLeft = false;
                         _location.X = 0;
 
-                        if (_location.Y < 490 - _location.Height)
+                        if (_location.Y < 490 - _location.Height && !_landed)
                         {
                             _speed.Y = 2;
                         }
                         else if (_location.Y >= 490 - _location.Height)
                         {
+                            _landed = true;
                             _speed.Y = 0;
                             _location.Y = 490 - _location.Height;
 
@@ -213,14 +217,16 @@ namespace Final_Project
                     }
                     else //Boss is on the right side
                     {
+                        _facingLeft = true;
                         _location.X = 960 - _location.Width;
 
-                        if (_location.Y < 490 - _location.Height)
+                        if (_location.Y < 490 - _location.Height && !_landed)
                         {
                             _speed.Y = 2;
                         }
                         else if (_location.Y >= 490 - _location.Height)
                         {
+                            _landed = true;
                             _speed.Y = 0;
                             _location.Y = 490 - _location.Height;
 
@@ -231,14 +237,9 @@ namespace Final_Project
                             }
                         }
                     }
-                    
-                    
-                    
                 }
                 else if (_state == BossState.VerticalBeam)// vertical beam attack
-                {
-                    _side = _random.Next(1, 3);
-
+                { 
                     if (_side == 1)
                     {
                         _location.X = 0;

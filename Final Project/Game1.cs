@@ -465,6 +465,8 @@ namespace Final_Project
                 boss.Draw(_spriteBatch);
                 _spriteBatch.Draw(rectangleTexture, boss.bossHurtbox, new Color(Color.Black, 0.5f));
                 _spriteBatch.Draw(rectangleTexture, boss.bossHitbox, new Color(Color.Red, 0.5f));
+
+                beam.Draw(_spriteBatch);
             }
             else if (currentScreen == Screen.WinScreen)
             {

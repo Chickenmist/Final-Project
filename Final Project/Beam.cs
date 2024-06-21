@@ -22,6 +22,8 @@ namespace Final_Project
 
         private List<Rectangle> beams = new List<Rectangle>(); //This is for the vertical beams
 
+        private float _timeActive;
+
         public Beam(Texture2D texture, int x, int y)
         {
             _texture = texture;
@@ -34,16 +36,15 @@ namespace Final_Project
             {
                 if (_leftSide) //Boss is on the left side of the screen
                 {
-                    _location.X = boss.bossHurtbox.Right;
+                    _location = new Rectangle( boss.bossHurtbox.Right, boss.bossHurtbox.Y, 887, 100);
                 }
                 else //Boss is on the right side of the screen
                 {
-                    _location.X = boss.bossHurtbox.Left - _location.Width;
+                    _location = new Rectangle(boss.bossHurtbox.Left - 887, boss.bossHurtbox.Y, 887, 100);
                 }
-
-                _location.Y = boss.bossHurtbox.Y;
-
                 _spriteFrame = new Rectangle(144, 26, 73, 21);
+
+                _timeActive = 0;
             }
             else if (_verticalLaunchStart)
             {
@@ -52,6 +53,8 @@ namespace Final_Project
             else if (_launchedVertical)
             {
                 _spriteFrame = new Rectangle(144, 26, 73, 21);
+
+                _timeActive = 0;
             }
 
             if (_horizontalHitBox.Intersects(player.playerHurtbox)) //Damages the player during the horizontal beam
@@ -65,6 +68,15 @@ namespace Final_Project
                 {
                     player.Damaged();
                 }
+            }
+
+            if (_timeActive < 2)
+            {
+                _timeActive -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
+            else if (_timeActive >= 2)
+            {
+                _timeActive = 2;
             }
 
             GenerateHitboxes();
@@ -85,6 +97,7 @@ namespace Final_Project
         public void FiredVertical() //Launches the beam vertically
         {
             _launchedVertical = true;
+            beams.Clear();
             _verticalLaunchStart = false;
         }
 
@@ -95,25 +108,28 @@ namespace Final_Project
 
         private void GenerateHitboxes()
         {
-            if (_launchedHorizontal)
+            if (_timeActive != 2)
             {
-                _horizontalHitBox = new Rectangle(_location.X, _location.Y, _location.Width, _location.Height);
-            }
-            else if (_verticalLaunchStart)
-            {
-                beams.Add(new Rectangle(0, 500, 100, 30));
-                beams.Add(new Rectangle(200, 500, 100, 30));
-                beams.Add(new Rectangle(400, 500, 100, 30));
-                beams.Add(new Rectangle(600, 500, 100, 30));
-                beams.Add(new Rectangle(800, 500, 100, 30));
-            }
-            else if (_launchedVertical)
-            {
-                beams.Add(new Rectangle(0, 0, 100, 560));
-                beams.Add(new Rectangle(200, 0, 100, 560));
-                beams.Add(new Rectangle(400, 0, 100, 560));
-                beams.Add(new Rectangle(600, 0, 100, 560));
-                beams.Add(new Rectangle(800, 0, 100, 560));
+                if (_launchedHorizontal)
+                {
+                    _horizontalHitBox = new Rectangle(_location.X, _location.Y, _location.Width, _location.Height);
+                }
+                else if (_verticalLaunchStart)
+                {
+                    beams.Add(new Rectangle(0, 500, 100, 30));
+                    beams.Add(new Rectangle(200, 500, 100, 30));
+                    beams.Add(new Rectangle(400, 500, 100, 30));
+                    beams.Add(new Rectangle(600, 500, 100, 30));
+                    beams.Add(new Rectangle(800, 500, 100, 30));
+                }
+                else if (_launchedVertical)
+                {
+                    beams.Add(new Rectangle(0, 0, 100, 560));
+                    beams.Add(new Rectangle(200, 0, 100, 560));
+                    beams.Add(new Rectangle(400, 0, 100, 560));
+                    beams.Add(new Rectangle(600, 0, 100, 560));
+                    beams.Add(new Rectangle(800, 0, 100, 560));
+                }
             }
             else
             {
@@ -132,12 +148,8 @@ namespace Final_Project
             {
                 foreach (var beams in beams)
                 {
-                    spriteBatch.Draw(_texture, beams, _spriteFrame, Color.White, 90, new Vector2(_spriteFrame.Width / 2f, _spriteFrame.Height / 2f), SpriteEffects.None, 0f);
+                    spriteBatch.Draw(_texture, beams, _spriteFrame, Color.White, 270, new Vector2(_spriteFrame.Width / 2f, _spriteFrame.Height / 2f), SpriteEffects.None, 0f);
                 }
-            }
-            else
-            {
-
             }
         }
     }
