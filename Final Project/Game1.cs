@@ -137,6 +137,14 @@ namespace Final_Project
         Rectangle mustDieRectangle;
         //
 
+        //Information Textures
+
+        //
+
+        //Information rectangle
+        Rectangle informationRectangle; //Height is 295 Y location is 215 X location 100 width is 380
+        //
+
         //Variables to check which button the mouse is hovering
 
         bool hoverQuit;
@@ -174,8 +182,9 @@ namespace Final_Project
 
             humanRectangle = new Rectangle(370, 30, 128, 32);
             boneHunterRectangle = new Rectangle(370, 64, 128, 32);
-            lBKRectangle = new Rectangle(370, 96, 128, 32);
-            mustDieRectangle = new Rectangle(370, 128, 128, 32);
+            lBKRectangle = new Rectangle(370, 98, 128, 32);
+            mustDieRectangle = new Rectangle(370, 132, 128, 32);
+            quitRectangle = new Rectangle(370, 166, 128, 32);
             base.Initialize();
             
             //Adds the player sprites to the texture list and creates the player
@@ -247,6 +256,8 @@ namespace Final_Project
 
             //Load Button Sprites
 
+            quitUpTexture = Content.Load<Texture2D>("Quit Up Sprite");
+            quitDownTexture = Content.Load<Texture2D>("Quit Down Sprite");
 
             humanUpTexture = Content.Load<Texture2D>("Human Up");
             humanDownTexture = Content.Load<Texture2D>("Human Down");
@@ -281,6 +292,8 @@ namespace Final_Project
             }
             else if (currentScreen == Screen.Difficulty) //Difficulty selection screen
             {
+                quitRectangle.Location = new Point(370, 166); //Moves the Quit button
+
                 if (humanRectangle.Contains(mouseState.Position)) //The mouse is hovering the Human button
                 {
                     hoverHuman = true;
@@ -347,6 +360,20 @@ namespace Final_Project
                 else //The mouse isn't hovering the Must Die button
                 {
                     hoverMustDie = false;
+                }
+
+                if(quitRectangle.Contains(mouseState.Position)) //The mouse is hovering the Quit button
+                {
+                    hoverQuit = true;
+
+                    if (mouseState.LeftButton == ButtonState.Pressed) //Quit is selected
+                    {
+                        currentScreen = Screen.MainMenu;
+                    }
+                }
+                else //The mouse isn't hovering the Quit button
+                {
+                    hoverQuit = false;
                 }
             }
             else if (currentScreen == Screen.Controls) //Controls screen
@@ -438,6 +465,14 @@ namespace Final_Project
                     _spriteBatch.Draw(mustDieUpTexture, mustDieRectangle, Color.White);
                 }
 
+                if (hoverQuit)
+                {
+                    _spriteBatch.Draw(quitDownTexture, quitRectangle, Color.White);
+                }
+                else
+                {
+                    _spriteBatch.Draw(quitUpTexture, quitRectangle, Color.White);
+                }
             }
             else if (currentScreen == Screen.Controls) //Controls screen
             {
