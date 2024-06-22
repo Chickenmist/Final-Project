@@ -28,6 +28,7 @@ namespace Final_Project
         SlashOne,
         Dash,
         LightningBolt,
+        Projectile,
         SlashTwo,
         Jump,
         Hurt,
@@ -49,9 +50,6 @@ namespace Final_Project
         Difficulty,
         Controls,
         Information,
-        MusicScreen,
-        Naming,
-        Inspriation,
         FightScreen,
         WinScreen,
         LoseScreen
@@ -61,6 +59,7 @@ namespace Final_Project
     {
         Player player;
         Boss boss;
+        Projectile projectile;
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -82,6 +81,7 @@ namespace Final_Project
         Texture2D playerWalkTexture;
         Texture2D playerRunTexture;
         Texture2D playerAttackTexture;
+        Texture2D playerHurtTexture;
         Texture2D playerDeathTexture;
         Texture2D playerJumpTexture;
         //
@@ -89,24 +89,20 @@ namespace Final_Project
         //Boss Tetxures
         List<Texture2D> bossTextures = new List<Texture2D>();
 
-        Texture2D bossPhaseOneIdleTexture;
+        Texture2D bossIdleTexture;
         Texture2D bossSlashOneTexture;
         Texture2D bossSlashTwoTexture;
         Texture2D bossDashTexture;
         Texture2D bossLightingAttackTexture;
+        Texture2D bossProjectileTexture;
 
         Texture2D bossJumpTexture;
         Texture2D bossHurtTexture;
-        Texture2D bossHurtFlyingTexture;
         Texture2D bossDeadTexture;
-
-        Texture2D bossPhaseTwoIdleTexture;
-        Texture2D bossHorizontalBeamTexture;
-        Texture2D bossVerticalBeamTexture;
         //
 
-        //Beam texture
-        Texture2D beamTexture;
+        //Projectile texture
+        Texture2D projectileTexture;
         //
 
         //Background and floor
@@ -118,6 +114,8 @@ namespace Final_Project
 
         //Button Textures
 
+        Texture2D quitUpTexture;
+        Texture2D quitDownTexture;
 
         Texture2D humanUpTexture;
         Texture2D humanDownTexture;
@@ -131,6 +129,8 @@ namespace Final_Project
 
         //Button rectangles
 
+        Rectangle quitRectangle;
+
         Rectangle humanRectangle;
         Rectangle boneHunterRectangle;
         Rectangle lBKRectangle;
@@ -139,13 +139,17 @@ namespace Final_Project
 
         //Variables to check which button the mouse is hovering
 
+        bool hoverQuit;
+
         bool hoverHuman;
         bool hoverBoneHunter;
         bool hoverLBK;
         bool hoverMustDie;
         //
 
+        //This is for box checking
         Texture2D rectangleTexture;
+        //
 
         public Game1()
         {
@@ -168,39 +172,39 @@ namespace Final_Project
 
             currentScreen = Screen.Difficulty;
 
-            difficultySelected = Difficulty.MustDie;
-
             humanRectangle = new Rectangle(370, 30, 128, 32);
             boneHunterRectangle = new Rectangle(370, 64, 128, 32);
             lBKRectangle = new Rectangle(370, 96, 128, 32);
             mustDieRectangle = new Rectangle(370, 128, 128, 32);
             base.Initialize();
             
-            //Player
+            //Adds the player sprites to the texture list and creates the player
             playerTextures.Add(playerIdleTexture);
             playerTextures.Add(playerWalkTexture);
             playerTextures.Add(playerRunTexture);
             playerTextures.Add(playerAttackTexture);
             playerTextures.Add(playerJumpTexture);
+            playerTextures.Add(playerHurtTexture);
             playerTextures.Add(playerDeathTexture);
             player = new Player(playerTextures, 50, floor.Y - 95);
             //
 
-            //Boss
-            bossTextures.Add(bossPhaseOneIdleTexture);
+            //Adds the boss sprites to the texture list and creates the boss
+            bossTextures.Add(bossIdleTexture);
             bossTextures.Add(bossSlashOneTexture);
             bossTextures.Add(bossDashTexture);
             bossTextures.Add(bossLightingAttackTexture);
+            bossTextures.Add(bossProjectileTexture);
             bossTextures.Add(bossSlashTwoTexture);
             bossTextures.Add(bossJumpTexture);
             bossTextures.Add(bossHurtTexture);
-            bossTextures.Add(bossHurtFlyingTexture);
-            bossTextures.Add(bossPhaseTwoIdleTexture);
-            bossTextures.Add(bossHorizontalBeamTexture);
-            bossTextures.Add(bossVerticalBeamTexture);
             bossTextures.Add(bossDeadTexture);
 
             boss = new Boss(bossTextures, 830, floor.Y - 105);
+            //
+
+            //Creates the projectile
+            projectile = new Projectile(projectileTexture, 0, 0);
             //
         }
 
@@ -210,36 +214,38 @@ namespace Final_Project
 
             // TODO: use this.Content to load your game content here
             
-            //Player Sprites
+            //Load Player Sprites
             playerAttackTexture = Content.Load<Texture2D>("Skeleton Attack");
             playerIdleTexture = Content.Load<Texture2D>("Skeleton Idle");
+            playerHurtTexture = Content.Load<Texture2D>("Skeleton Hurt");
             playerDeathTexture = Content.Load<Texture2D>("Skeleton Dead");
             playerRunTexture = Content.Load<Texture2D>("Skeleton Run");
             playerWalkTexture = Content.Load<Texture2D>("Skeleton Walk");
             playerJumpTexture = Content.Load<Texture2D>("Skeleton Jumping");
             //
 
-            //Boss Sprites
-            bossPhaseOneIdleTexture = Content.Load<Texture2D>("Boss Ground Idle");
+            //Load Boss Sprites
+            bossIdleTexture = Content.Load<Texture2D>("Boss Ground Idle");
             bossSlashOneTexture = Content.Load<Texture2D>("Boss Attack 1");
             bossSlashTwoTexture = Content.Load<Texture2D>("Boss Attack 2");
             bossDashTexture = Content.Load<Texture2D>("Boss Dash");
             bossLightingAttackTexture = Content.Load<Texture2D>("Lightning Bolt");
+            bossProjectileTexture = Content.Load<Texture2D>("Boss Projectile");
             bossJumpTexture = Content.Load<Texture2D>("Boss Jump");
             bossHurtTexture = Content.Load<Texture2D>("Boss Hurt");
-            bossHurtFlyingTexture = Content.Load<Texture2D>("Boss Hurt Flying");
-            bossPhaseTwoIdleTexture = Content.Load<Texture2D>("Boss Flying Idle");
-            bossHorizontalBeamTexture = Content.Load<Texture2D>("Boss Horizontal Beam");
-            bossVerticalBeamTexture = Content.Load<Texture2D>("Boss Vertical Beam");
             bossDeadTexture = Content.Load<Texture2D>("Boss Dead");
             //
 
-            //Background Sprites
+            //loads projectile texture
+            projectileTexture = Content.Load<Texture2D>("Projectile Sprite");
+            //
+
+            //Load Background Sprites
             battleBackgroundTexture = Content.Load<Texture2D>("Background");
             titleCardTexture = Content.Load<Texture2D>("Title Card");
             //
 
-            //Button Sprites
+            //Load Button Sprites
 
 
             humanUpTexture = Content.Load<Texture2D>("Human Up");
@@ -252,7 +258,9 @@ namespace Final_Project
             mustDieDownTexture = Content.Load<Texture2D>("Must Die Down");
             //
 
+            //Loads the rectangle texture for box checking
             rectangleTexture = Content.Load<Texture2D>("rectangle");
+            //
         }
 
         protected override void Update(GameTime gameTime)
@@ -267,17 +275,17 @@ namespace Final_Project
 
             Window.Title = $"{mouseState.X} {mouseState.Y}";
 
-            if (currentScreen == Screen.MainMenu)
+            if (currentScreen == Screen.MainMenu) //The main menu
             {
 
             }
-            else if (currentScreen == Screen.Difficulty)
+            else if (currentScreen == Screen.Difficulty) //Difficulty selection screen
             {
-                if (humanRectangle.Contains(mouseState.Position))
+                if (humanRectangle.Contains(mouseState.Position)) //The mouse is hovering the Human button
                 {
                     hoverHuman = true;
 
-                    if (mouseState.LeftButton == ButtonState.Pressed)
+                    if (mouseState.LeftButton == ButtonState.Pressed) //The player selects the Human difficulty
                     {
                         boss.GetDifficulty = 1;
                         player.GetDifficulty = 1;
@@ -285,16 +293,16 @@ namespace Final_Project
                         currentScreen = Screen.FightScreen;
                     }
                 }
-                else
+                else //The mouse isn't hovering the Human button
                 {
                     hoverHuman = false;
                 }
                 
-                if (boneHunterRectangle.Contains(mouseState.Position))
+                if (boneHunterRectangle.Contains(mouseState.Position)) //The mouse if hovering over the Bone Hunter button
                 {
                     hoverBoneHunter = true;
 
-                    if (mouseState.LeftButton == ButtonState.Pressed)
+                    if (mouseState.LeftButton == ButtonState.Pressed) //The player selects the Bone Hunter difficulty
                     {
                         boss.GetDifficulty = 2;
                         player.GetDifficulty = 2;
@@ -302,16 +310,16 @@ namespace Final_Project
                         currentScreen = Screen.FightScreen;
                     }
                 }
-                else
+                else //The mouse isn't hovering the Bone Hunter button
                 {
                     hoverBoneHunter = false;
                 }
                 
-                if (lBKRectangle.Contains(mouseState.Position))
+                if (lBKRectangle.Contains(mouseState.Position)) //The mouse is hovering the Legendary Bone Knight button 
                 {
                     hoverLBK = true;
 
-                    if (mouseState.LeftButton == ButtonState.Pressed)
+                    if (mouseState.LeftButton == ButtonState.Pressed) //The player selects the Legendary Bone Knight difficulty
                     {
                         boss.GetDifficulty = 3;
                         player.GetDifficulty = 3;
@@ -319,16 +327,16 @@ namespace Final_Project
                         currentScreen = Screen.FightScreen;
                     }
                 }
-                else
+                else //The mouse isn't hovering the Legendary Bone Knoght difficulty
                 {
                     hoverLBK = false;
                 }
                 
-                if (mustDieRectangle.Contains(mouseState.Position))
+                if (mustDieRectangle.Contains(mouseState.Position)) //The mouse is hovering the Must Die button
                 {
                     hoverMustDie = true;
 
-                    if (mouseState.LeftButton == ButtonState.Pressed)
+                    if (mouseState.LeftButton == ButtonState.Pressed) //The player selects the Must Die difficulty
                     {
                         boss.GetDifficulty = 4;
                         player.GetDifficulty = 4;
@@ -336,32 +344,43 @@ namespace Final_Project
                         currentScreen = Screen.FightScreen;
                     }
                 }
-                else
+                else //The mouse isn't hovering the Must Die button
                 {
                     hoverMustDie = false;
                 }
             }
-            else if (currentScreen == Screen.Controls)
+            else if (currentScreen == Screen.Controls) //Controls screen
             {
 
             }
-            else if (currentScreen == Screen.Information)
+            else if (currentScreen == Screen.Information) //Information screen
             {
 
             }
-            else if (currentScreen == Screen.MusicScreen)
-            {
-
-            }
-            else if (currentScreen == Screen.Naming)
-            {
-
-            }
-            else if (currentScreen == Screen.FightScreen)
+            else if (currentScreen == Screen.FightScreen) //Fight Screen
             {   
                 player.Update(gameTime, keyboardState, mouseState, boss);
 
-                boss.Update(gameTime, player);
+                boss.Update(gameTime, player, projectile);
+
+                projectile.Update(gameTime, player, boss);
+
+                if (player.playerDead)
+                {
+                    currentScreen = Screen.LoseScreen;
+                }
+                else if (boss.bossDead)
+                {
+                    currentScreen = Screen.WinScreen;
+                }
+            }
+            else if (currentScreen == Screen.WinScreen) //win screen
+            {
+
+            }
+            else if (currentScreen == Screen.LoseScreen) //Lose screen
+            {
+
             }
 
             base.Update(gameTime);
@@ -375,72 +394,60 @@ namespace Final_Project
 
             _spriteBatch.Begin();
 
-            if (currentScreen == Screen.MainMenu)
+            if (currentScreen == Screen.MainMenu) //Main menu
             {
                 _spriteBatch.Draw(titleCardTexture, background, Color.White);
             }
-            else if (currentScreen == Screen.Difficulty)
+            else if (currentScreen == Screen.Difficulty) //Difficulty selection screen
             {
                 _spriteBatch.Draw(titleCardTexture, background, Color.White);
 
-                if (hoverHuman)
+                if (hoverHuman) //Hovering the Human button
                 {
                     _spriteBatch.Draw(humanDownTexture, humanRectangle, Color.White);
                 }
-                else
+                else //Not hovering the human button
                 {
                     _spriteBatch.Draw(humanUpTexture, humanRectangle, Color.White);
                 }
 
-                if (hoverBoneHunter)
+                if (hoverBoneHunter) //Hovering the Bone Hunter button
                 {
                     _spriteBatch.Draw(boneHunterDownTexture, boneHunterRectangle, Color.White);
                 }
-                else
+                else //Not hovering the Bone Hunter button
                 {
                     _spriteBatch.Draw(boneHunterUpTexture, boneHunterRectangle, Color.White);
                 }
 
-                if (hoverLBK)
+                if (hoverLBK) //Hovering the Legendary Bone Knight button
                 {
                     _spriteBatch.Draw(lBKDownTexture, lBKRectangle, Color.White);
                 }
-                else
+                else //Not hovering the Legendary Bone Knight button
                 {
                     _spriteBatch.Draw(lBKUpTexture, lBKRectangle, Color.White);
                 }
 
-                if (hoverMustDie)
+                if (hoverMustDie) //Hovering the Must Die button
                 {
                     _spriteBatch.Draw(mustDieDownTexture, mustDieRectangle, Color.White);
                 }
-                else
+                else //Not hovering the Must Die button
                 {
                     _spriteBatch.Draw(mustDieUpTexture, mustDieRectangle, Color.White);
                 }
 
             }
-            else if (currentScreen == Screen.Controls)
+            else if (currentScreen == Screen.Controls) //Controls screen
             {
 
             }
-            else if (currentScreen == Screen.Information)
+            else if (currentScreen == Screen.Information) //Information screen
             {
 
             }
-            else if (currentScreen == Screen.MusicScreen)
-            {
-
-            }
-            else if (currentScreen == Screen.Naming)
-            {
-
-            }
-            else if (currentScreen == Screen.Inspriation)
-            {
-
-            }
-            else if (currentScreen == Screen.FightScreen)
+            else if (currentScreen == Screen.FightScreen) //Fight screen
             {
                 _spriteBatch.Draw(battleBackgroundTexture, background, Color.White);
 
@@ -451,14 +458,20 @@ namespace Final_Project
                 boss.Draw(_spriteBatch);
                 _spriteBatch.Draw(rectangleTexture, boss.bossHurtbox, new Color(Color.Black, 0.5f));
                 _spriteBatch.Draw(rectangleTexture, boss.bossHitbox, new Color(Color.Red, 0.5f));
-            }
-            else if (currentScreen == Screen.WinScreen)
-            {
 
+                projectile.Draw(_spriteBatch);
             }
-            else if (currentScreen == Screen.LoseScreen)
+            else if (currentScreen == Screen.WinScreen) //Win screen
             {
-                
+                GraphicsDevice.Clear(Color.Black);
+
+                boss.Draw(_spriteBatch);
+            }
+            else if (currentScreen == Screen.LoseScreen) //Lose screen
+            {
+                GraphicsDevice.Clear(Color.Black);
+
+                player.Draw(_spriteBatch);
             }
 
             _spriteBatch.End();

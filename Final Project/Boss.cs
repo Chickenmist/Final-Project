@@ -30,7 +30,7 @@ namespace Final_Project
         private bool _falling = false;
         private bool _damaged;
         public bool phaseTwoTransition;
-        private bool _dead;
+        public bool bossDead;
 
         private bool _facingLeft = true; 
         private int _frame = 0;
@@ -51,13 +51,13 @@ namespace Final_Project
             _speed = new Vector2();
             _health = 100;
             _coolDown = 1;
-            _dead = false;
+            bossDead = false;
             _damaged = false;
             _firedBeam = false;
             _landed = false;
         }
 
-        public void Update(GameTime gameTime, Player player)
+        public void Update(GameTime gameTime, Player player, Projectile projectile)
         {
             if (_health > 0)
             {
@@ -76,12 +76,12 @@ namespace Final_Project
                 {
                     _frame = 0;
 
-                    _state = (BossState)_random.Next(1, 4);
+                    _state = (BossState)_random.Next(1, 5);
 
                     _active = true;
                 }
 
-                if (_state == BossState.SlashOne || _state == BossState.SlashTwo)
+                if (_state == BossState.SlashOne || _state == BossState.SlashTwo) //Slash attack
                 {
                     if (_facingLeft)
                     {
@@ -98,7 +98,7 @@ namespace Final_Project
                         }
                     }
                 }
-                else if (_state == BossState.Dash)
+                else if (_state == BossState.Dash) //Dash attack
                 {
                     if (_facingLeft)
                     {
@@ -109,10 +109,26 @@ namespace Final_Project
                         _speed.X = 6;
                     }
                 }
-                else if (_state == BossState.LightningBolt || _state == BossState.GroundIdle)
+                else if (_state == BossState.LightningBolt || _state == BossState.GroundIdle) //Lighting bolt and idle
                 {
                     _speed.X = 0;
                     _speed.Y = 0;
+                }
+                else if (_state == BossState.Projectile) //Projectile attack
+                {
+                    _speed.X = 0;
+
+                    if (_frame == 2)
+                    {
+                        if (_facingLeft)
+                        {
+                            projectile.FireLeft();
+                        }
+                        else
+                        {
+                            projectile.FireRight();
+                        }
+                    }
                 }
                 else if (_state == BossState.Hurt)
                 {
@@ -164,6 +180,8 @@ namespace Final_Project
             }
             else if (_health == 0) //Dead
             {
+                _speed.X = 0;
+                _speed.Y = 0;
                 _state = BossState.Dead;
             }
 
@@ -186,7 +204,7 @@ namespace Final_Project
         }
 
 
-        private void Move()
+        private void Move() //Handles movement
         {
             _location.X += (int)_speed.X;
             _location.Y += (int)_speed.Y;
@@ -500,6 +518,51 @@ namespace Final_Project
                     _frameTime = 0;
                 }
             }
+            else if (_state == BossState.Projectile) //Boss fire the projectile
+            {
+                if (_frame == 0)
+                {
+                    _spriteFrame = new Rectangle(50, 43, 119, 85);
+                }
+                else if (_frame == 1)
+                {
+                    _spriteFrame = new Rectangle(178, 43, 119, 85);
+                }
+                else if (_frame == 2) //Projectile is fired on this frame
+                {
+                    _spriteFrame = new Rectangle(304, 43, 119, 85);
+                }
+                else if (_frame == 3)
+                {
+                    _spriteFrame = new Rectangle(431, 43, 119, 85);
+                }
+                else if (_frame == 4)
+                {
+                    _spriteFrame = new Rectangle(558, 43, 119, 85);
+                }
+                else if (_frame == 5)
+                {
+                    _spriteFrame = new Rectangle(687, 43, 119, 85);
+                }
+                else if (_frame == 6)
+                {
+                    _spriteFrame = new Rectangle(817, 43, 119, 85);
+                }
+
+                if (_frameTime >= 0.06)
+                {
+                    if (_frame >= 6)
+                    {
+                        _frame = 0;
+                        StartCooldown();
+                    }
+                    else
+                    {
+                        _frame++;
+                    }
+                    _frameTime = 0;
+                }
+            }
             else if (_state == BossState.Jump) //Jump
             {
                 if (_frame == 0)
@@ -549,7 +612,7 @@ namespace Final_Project
                     _frameTime = 0;
                 }
             }
-            else if (_state == BossState.Hurt) //Taking damage on the ground
+            else if (_state == BossState.Hurt) //Taking damage
             {
                 if (_frame == 0)
                 {
@@ -564,7 +627,7 @@ namespace Final_Project
                     _spriteFrame = new Rectangle(296, 43, 119, 85);
                 }
 
-                if (_frameTime >= 0.07)
+                if (_frameTime >= 0.1)
                 {
                     if (_frame >= 2)
                     {
@@ -580,7 +643,39 @@ namespace Final_Project
             }
             else if (_state == BossState.Dead)
             {
+                if (_frame == 0)
+                {
+                    _spriteFrame = new Rectangle(36, 43, 119, 85);
+                }
+                else if (_frame == 1)
+                {
+                    _spriteFrame = new Rectangle(164, 43, 106, 85);
+                }
+                else if (_frame == 2)
+                {
+                    _spriteFrame = new Rectangle(293, 43, 119, 85);
+                }
+                else if (_frame == 3)
+                {
+                    _spriteFrame = new Rectangle(422, 43, 119, 85);
+                }
+                else if (_frame == 4)
+                {
+                    _spriteFrame = new Rectangle(550, 43, 119, 85);
+                }
 
+                if (_frameTime >= 0.2)
+                {
+                    if (_frame < 4)
+                    {
+                        _frame++;
+                        _frameTime = 0;
+                    }
+                    else if (_frame == 4)
+                    {
+                        bossDead = true;
+                    }
+                }
             }
         }
 
@@ -602,7 +697,7 @@ namespace Final_Project
                 }
                 else if (_state == BossState.SlashOne || _state == BossState.SlashTwo)
                 {
-                    bossHitbox = new Rectangle(bossHurtbox.Left - 110, bossHurtbox.Y, 110, bossHurtbox.Height);
+                    bossHitbox = new Rectangle(bossHurtbox.Left - 57, bossHurtbox.Y, 110, bossHurtbox.Height);
                 }
                 else if (_state == BossState.LightningBolt)
                 {
@@ -696,11 +791,19 @@ namespace Final_Project
             {
                 _health -= 2;
             }
-            
-            _state = BossState.Hurt;
-            
-            _damaged = true;
-            bossHurtbox = Rectangle.Empty;
+
+            if (_health <= 0)
+            {
+                _health = 0;
+                _frame = 0;
+            }
+            else if (_health > 0)
+            {
+                _state = BossState.Hurt;
+
+                _damaged = true;
+                bossHurtbox = Rectangle.Empty;
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)
