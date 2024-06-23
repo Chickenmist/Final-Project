@@ -113,6 +113,13 @@ namespace Final_Project
         //
 
         //Button Textures
+        Texture2D playUpTexture;
+        Texture2D playDownTexture;
+        Texture2D controlsUpTexture;
+        Texture2D controlsDownTexture;
+        Texture2D creditsUpTexture;
+        Texture2D creditsDownTexture;
+
 
         Texture2D quitUpTexture;
         Texture2D quitDownTexture;
@@ -128,6 +135,9 @@ namespace Final_Project
         //
 
         //Button rectangles
+        Rectangle startRectangle;
+        Rectangle controlsRectangle;
+        Rectangle creditsRectangle;
 
         Rectangle quitRectangle;
 
@@ -138,7 +148,18 @@ namespace Final_Project
         //
 
         //Information Textures
+        Texture2D returnTexture;
+        Texture2D viewCtrlTexture;
+        Texture2D quitGameTexture;
+        Texture2D viewInfoTexture;
+        Texture2D musicUsedTexture;
+        Texture2D ctrlsTexture;
 
+        Texture2D selectDiffTexture;
+        Texture2D humanInfoTexture;
+        Texture2D boneHuntInfoTexture;
+        Texture2D lBKInfoTexture;
+        Texture2D mustDieInfoTexture;
         //
 
         //Information rectangle
@@ -146,6 +167,9 @@ namespace Final_Project
         //
 
         //Variables to check which button the mouse is hovering
+        bool hoverPlay;
+        bool hoverControls;
+        bool hoverCredits;
 
         bool hoverQuit;
 
@@ -178,13 +202,25 @@ namespace Final_Project
 
             floor = new Rectangle(0, 490, 960, 50);
 
-            currentScreen = Screen.Difficulty;
+            currentScreen = Screen.MainMenu;
 
+            //Difficulty button rectangles
             humanRectangle = new Rectangle(370, 30, 128, 32);
             boneHunterRectangle = new Rectangle(370, 64, 128, 32);
             lBKRectangle = new Rectangle(370, 98, 128, 32);
             mustDieRectangle = new Rectangle(370, 132, 128, 32);
+            //
+
+            //Main menu button rectangles
+            startRectangle = new Rectangle(370, 64, 128, 32);
+            controlsRectangle = new Rectangle(370, 98, 128, 32);
+            creditsRectangle = new Rectangle(370, 132, 128, 32);
+            //
+
             quitRectangle = new Rectangle(370, 166, 128, 32);
+
+            informationRectangle = new Rectangle(253, 215, 380, 295);
+            
             base.Initialize();
             
             //Adds the player sprites to the texture list and creates the player
@@ -255,6 +291,13 @@ namespace Final_Project
             //
 
             //Load Button Sprites
+            playUpTexture = Content.Load<Texture2D>("Start Up Texture");
+            playDownTexture = Content.Load<Texture2D>("Start Down Texture");
+            controlsUpTexture = Content.Load<Texture2D>("Controls Up");
+            controlsDownTexture = Content.Load<Texture2D>("Controls Down");
+            creditsUpTexture = Content.Load<Texture2D>("Credits Up");
+            creditsDownTexture = Content.Load<Texture2D>("Credits Down");
+
 
             quitUpTexture = Content.Load<Texture2D>("Quit Up Sprite");
             quitDownTexture = Content.Load<Texture2D>("Quit Down Sprite");
@@ -267,6 +310,21 @@ namespace Final_Project
             lBKDownTexture = Content.Load<Texture2D>("LBK Down");
             mustDieUpTexture = Content.Load<Texture2D>("Must Die Up");
             mustDieDownTexture = Content.Load<Texture2D>("Must Die Down");
+            //
+
+            //Loads Information Boxes
+            selectDiffTexture = Content.Load<Texture2D>("Select Difficulty");
+            humanInfoTexture = Content.Load<Texture2D>("Human Description");
+            boneHuntInfoTexture = Content.Load<Texture2D>("Bone Hunter Description");
+            lBKInfoTexture = Content.Load<Texture2D>("LBK Description");
+            mustDieInfoTexture = Content.Load<Texture2D>("Must Die Description");
+
+            returnTexture = Content.Load<Texture2D>("Return To Main Menu");
+            musicUsedTexture = Content.Load<Texture2D>("Music Used");
+            viewCtrlTexture = Content.Load<Texture2D>("View Controls");
+            ctrlsTexture = Content.Load<Texture2D>("Controls");
+            viewInfoTexture = Content.Load<Texture2D>("View Information");
+            quitGameTexture = Content.Load<Texture2D>("Quit The Game");
             //
 
             //Loads the rectangle texture for box checking
@@ -288,12 +346,64 @@ namespace Final_Project
 
             if (currentScreen == Screen.MainMenu) //The main menu
             {
+                if (startRectangle.Contains(mouseState.Position)) //Mouse is hovering the play button
+                {
+                    hoverPlay = true;
 
+                    if (mouseState.LeftButton == ButtonState.Pressed) //Play is selected
+                    {
+                        currentScreen = Screen.Difficulty;
+                    }
+                }
+                else //Mouse is not hovering the play button
+                {
+                    hoverPlay = false;
+                }
+
+                if (controlsRectangle.Contains(mouseState.Position)) //Mouse is hovering the contols button
+                {
+                    hoverControls = true;
+
+                    if (mouseState.LeftButton == ButtonState.Pressed) //Controls is selected
+                    {
+                        currentScreen = Screen.Controls;
+                    }
+                }
+                else //Mouse isn't hovering the controls button
+                {
+                    hoverControls = false;
+                }
+
+                if (creditsRectangle.Contains(mouseState.Position)) //Mouse is hovering the credits button
+                {
+                    hoverCredits = true;
+
+                    if (mouseState.LeftButton == ButtonState.Pressed) //Credits is selected
+                    {
+                        currentScreen = Screen.Information;
+                    }
+                }
+                else //Mouse isn't hovering the credits button
+                {
+                    hoverCredits = false;
+                }
+
+                if (quitRectangle.Contains(mouseState.Position)) //The mouse is hovering the Quit button
+                {
+                    hoverQuit = true;
+
+                    if (mouseState.LeftButton == ButtonState.Pressed) //Quit is selected
+                    {
+                        this.Exit();
+                    }
+                }
+                else //The mouse isn't hovering the Quit button
+                {
+                    hoverQuit = false;
+                }
             }
             else if (currentScreen == Screen.Difficulty) //Difficulty selection screen
             {
-                quitRectangle.Location = new Point(370, 166); //Moves the Quit button
-
                 if (humanRectangle.Contains(mouseState.Position)) //The mouse is hovering the Human button
                 {
                     hoverHuman = true;
@@ -401,7 +511,7 @@ namespace Final_Project
                     currentScreen = Screen.WinScreen;
                 }
             }
-            else if (currentScreen == Screen.WinScreen) //win screen
+            else if (currentScreen == Screen.WinScreen) //Win screen
             {
 
             }
@@ -424,6 +534,46 @@ namespace Final_Project
             if (currentScreen == Screen.MainMenu) //Main menu
             {
                 _spriteBatch.Draw(titleCardTexture, background, Color.White);
+
+                if(hoverPlay) //Hovering the play button
+                {
+                    _spriteBatch.Draw(playDownTexture, startRectangle, Color.White);
+                    _spriteBatch.Draw(selectDiffTexture, informationRectangle, Color.White);
+                }
+                else //Not hovering the play button
+                {
+                    _spriteBatch.Draw(playUpTexture, startRectangle, Color.White);
+                }
+
+                if (hoverControls) //Hovering the controls button
+                {
+                    _spriteBatch.Draw(controlsDownTexture, controlsRectangle, Color.White);
+                    _spriteBatch.Draw(viewCtrlTexture, informationRectangle, Color.White);
+                }
+                else //Not hovering the controls button
+                {
+                    _spriteBatch.Draw(controlsUpTexture, controlsRectangle, Color.White);
+                }
+
+                if(hoverCredits) //Hovering the credits button
+                {
+                    _spriteBatch.Draw(creditsDownTexture, creditsRectangle, Color.White);
+                    _spriteBatch.Draw(viewInfoTexture, informationRectangle, Color.White);
+                }
+                else //Not hovering the credits button
+                {
+                    _spriteBatch.Draw(creditsUpTexture, creditsRectangle, Color.White);
+                }
+
+                if (hoverQuit) //Hovering the quit button
+                {
+                    _spriteBatch.Draw(quitDownTexture, quitRectangle, Color.White);
+                    _spriteBatch.Draw(quitGameTexture, informationRectangle, Color.White);
+                }
+                else //Not hovering the quit button 
+                {
+                    _spriteBatch.Draw(quitUpTexture, quitRectangle, Color.White);
+                }
             }
             else if (currentScreen == Screen.Difficulty) //Difficulty selection screen
             {
@@ -432,6 +582,7 @@ namespace Final_Project
                 if (hoverHuman) //Hovering the Human button
                 {
                     _spriteBatch.Draw(humanDownTexture, humanRectangle, Color.White);
+                    _spriteBatch.Draw(humanInfoTexture, informationRectangle, Color.White);
                 }
                 else //Not hovering the human button
                 {
@@ -441,6 +592,7 @@ namespace Final_Project
                 if (hoverBoneHunter) //Hovering the Bone Hunter button
                 {
                     _spriteBatch.Draw(boneHunterDownTexture, boneHunterRectangle, Color.White);
+                    _spriteBatch.Draw(boneHuntInfoTexture, informationRectangle, Color.White);
                 }
                 else //Not hovering the Bone Hunter button
                 {
@@ -450,6 +602,7 @@ namespace Final_Project
                 if (hoverLBK) //Hovering the Legendary Bone Knight button
                 {
                     _spriteBatch.Draw(lBKDownTexture, lBKRectangle, Color.White);
+                    _spriteBatch.Draw(lBKInfoTexture, informationRectangle, Color.White);
                 }
                 else //Not hovering the Legendary Bone Knight button
                 {
@@ -459,19 +612,26 @@ namespace Final_Project
                 if (hoverMustDie) //Hovering the Must Die button
                 {
                     _spriteBatch.Draw(mustDieDownTexture, mustDieRectangle, Color.White);
+                    _spriteBatch.Draw(mustDieInfoTexture, informationRectangle, Color.White);
                 }
                 else //Not hovering the Must Die button
                 {
                     _spriteBatch.Draw(mustDieUpTexture, mustDieRectangle, Color.White);
                 }
 
-                if (hoverQuit)
+                if (hoverQuit) //Hovering the quit button
                 {
                     _spriteBatch.Draw(quitDownTexture, quitRectangle, Color.White);
+                    _spriteBatch.Draw(returnTexture, informationRectangle, Color.White);
                 }
-                else
+                else //Not hovering the quit button 
                 {
                     _spriteBatch.Draw(quitUpTexture, quitRectangle, Color.White);
+                }
+
+                if (!hoverBoneHunter && !hoverHuman && !hoverLBK && !hoverMustDie && !hoverQuit)
+                {
+                    _spriteBatch.Draw(selectDiffTexture, informationRectangle, Color.White);
                 }
             }
             else if (currentScreen == Screen.Controls) //Controls screen

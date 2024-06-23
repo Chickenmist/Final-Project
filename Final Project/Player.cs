@@ -472,6 +472,7 @@ namespace Final_Project
                     if (_frame == 3)
                     {
                         _frame = 3;
+                        playerDead = true;
                     }
                     else
                     {
