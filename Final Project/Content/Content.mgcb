@@ -25,6 +25,12 @@
 /processorParam:TextureFormat=Color
 /build:Background.png
 
+#begin Bloody Tears.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Bloody Tears.mp3
+
 #begin Bone Hunter Description.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -157,6 +163,12 @@
 /processorParam:TextureFormat=Color
 /build:Boss Projectile.png
 
+#begin Boss Sound Effect.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Boss Sound Effect.wav
+
 #begin Controls Down.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -216,6 +228,42 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Credits Up.png
+
+#begin Disapointing.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Disapointing.wav
+
+#begin DMC 3 Mission Start.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:DMC 3 Mission Start.mp3
+
+#begin End of the World - Gameover.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:End of the World - Gameover.mp3
+
+#begin Game Over.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Game Over.png
+
+#begin How Could I lose.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:How Could I lose.wav
 
 #begin Human Description.png
 /importer:TextureImporter
@@ -301,6 +349,12 @@
 /processorParam:TextureFormat=Color
 /build:Lightning Bolt.png
 
+#begin Menu Sound.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Menu Sound.wav
+
 #begin Music Used.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -348,6 +402,12 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Must Die Up.png
+
+#begin Pathetic.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Pathetic.wav
 
 #begin Projectile Sprite.png
 /importer:TextureImporter
@@ -409,6 +469,12 @@
 /processorParam:TextureFormat=Color
 /build:rectangle.png
 
+#begin Reflection Mission Clear.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Reflection Mission Clear.mp3
+
 #begin Return To Main Menu.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -420,6 +486,12 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Return To Main Menu.png
+
+#begin Scum.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Scum.mp3
 
 #begin Select Difficulty.png
 /importer:TextureImporter
@@ -541,6 +613,19 @@
 /processorParam:TextureFormat=Color
 /build:Start Up Texture.png
 
+#begin Sword Slash.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sword Slash.wav
+
+#begin Time Font.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Time Font.spritefont
+
 #begin Title Card.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -552,6 +637,13 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Title Card.png
+
+#begin Title.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Title.spritefont
 
 #begin View Controls.png
 /importer:TextureImporter
@@ -576,4 +668,16 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:View Information.png
+
+#begin Warm Up.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Warm Up.wav
+
+#begin Wasting My Time.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Wasting My Time.wav
 

@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -69,6 +71,11 @@ namespace Final_Project
         Screen currentScreen;
 
         int currentPlayerHealth;
+
+        float timePlayed;
+        TimeSpan time;
+
+        float buttonSelectionCooldown;
 
         KeyboardState keyboardState;
         MouseState mouseState;
@@ -163,7 +170,7 @@ namespace Final_Project
         //
 
         //Information rectangle
-        Rectangle informationRectangle; //Height is 295 Y location is 215 X location 100 width is 380
+        Rectangle informationRectangle;
         //
 
         //Variables to check which button the mouse is hovering
@@ -177,6 +184,58 @@ namespace Final_Project
         bool hoverBoneHunter;
         bool hoverLBK;
         bool hoverMustDie;
+        //
+
+        //Game over texture and rectangle
+        Texture2D gameOverTexture;
+        Rectangle gameOverRectangle;
+        //
+
+        //Sound Effects
+        SoundEffect playerSlashSFX; //Player attack sfx
+        SoundEffectInstance playerSlashInstance;
+
+        SoundEffect bossAttackSFX; //Boss attack sfx
+        SoundEffectInstance bossAttackInstance;
+
+        SoundEffect menuSoundSFX; //Menu sfx
+        SoundEffectInstance menuSoundInstance;
+
+        SoundEffect howCouldSFX; //Boss dies
+        SoundEffectInstance howCouldInstance;
+
+        SoundEffect scumSFX; //Boss is damaged
+        SoundEffectInstance scumInstance;
+
+        SoundEffect warmUpSFX; //Boss wins on Human
+        SoundEffectInstance warmUpInstance;
+
+        SoundEffect wasteOfTimeSFX; //Boss wins on Bone Hunter
+        SoundEffectInstance wasteOfTimeInstance;
+
+        SoundEffect patheticSFX; //Bons wins on LBK
+        SoundEffectInstance patheticInstance;
+
+        SoundEffect disapointingSFX; //Boss wins on Must Die
+        SoundEffectInstance disapointingInstance;
+        //
+
+        //Bools to check if a sound has been played
+        bool playerAttackPlayed;
+        bool bossAttackPlayed;
+        bool scumPlayed;
+        //
+
+        //Fonts
+        SpriteFont timeTaken;
+        SpriteFont titleFont;
+        //
+
+        //Music
+        Song menuSong;
+        Song battleSong;
+        Song winSong;
+        Song loseSong;
         //
 
         //This is for box checking
@@ -220,7 +279,13 @@ namespace Final_Project
             quitRectangle = new Rectangle(370, 166, 128, 32);
 
             informationRectangle = new Rectangle(253, 215, 380, 295);
-            
+
+            gameOverRectangle = new Rectangle(170, 40, 620, 162);
+
+            MediaPlayer.Volume = 0.3f;
+
+            timePlayed = 0;
+
             base.Initialize();
             
             //Adds the player sprites to the texture list and creates the player
@@ -251,6 +316,8 @@ namespace Final_Project
             //Creates the projectile
             projectile = new Projectile(projectileTexture, 0, 0);
             //
+
+            MediaPlayer.Play(menuSong);
         }
 
         protected override void LoadContent()
@@ -327,6 +394,51 @@ namespace Final_Project
             quitGameTexture = Content.Load<Texture2D>("Quit The Game");
             //
 
+            //Load game over and victory
+            gameOverTexture = Content.Load<Texture2D>("Game Over");
+            //
+
+            //Loads sound effects
+            playerSlashSFX = Content.Load<SoundEffect>("Sword Slash");
+            playerSlashInstance = playerSlashSFX.CreateInstance();
+
+            bossAttackSFX = Content.Load<SoundEffect>("Boss Sound Effect");
+            bossAttackInstance = bossAttackSFX.CreateInstance();
+
+            menuSoundSFX = Content.Load<SoundEffect>("Menu Sound");
+            menuSoundInstance = menuSoundSFX.CreateInstance();
+
+            howCouldSFX = Content.Load<SoundEffect>("How Could I lose");
+            howCouldInstance = howCouldSFX.CreateInstance();
+
+            scumSFX = Content.Load<SoundEffect>("Scum");
+            scumInstance = scumSFX.CreateInstance();
+
+            warmUpSFX = Content.Load<SoundEffect>("Warm Up");
+            warmUpInstance = warmUpSFX.CreateInstance();
+
+            wasteOfTimeSFX = Content.Load<SoundEffect>("Wasting My Time");
+            wasteOfTimeInstance = wasteOfTimeSFX.CreateInstance();
+
+            patheticSFX = Content.Load<SoundEffect>("Pathetic");
+            patheticInstance = patheticSFX.CreateInstance();
+
+            disapointingSFX = Content.Load<SoundEffect>("Disapointing");
+            disapointingInstance = disapointingSFX.CreateInstance();
+            //
+
+            //Loads Music
+            menuSong = Content.Load<Song>("DMC 3 Mission Start");
+            battleSong = Content.Load<Song>("Bloody Tears");
+            winSong = Content.Load<Song>("Reflection Mission Clear");
+            loseSong = Content.Load<Song>("End of the World - Gameover");
+            //
+
+            //Loads fonts
+            timeTaken = Content.Load<SpriteFont>("Time Font");
+            titleFont = Content.Load<SpriteFont>("Title");
+            //
+
             //Loads the rectangle texture for box checking
             rectangleTexture = Content.Load<Texture2D>("rectangle");
             //
@@ -342,7 +454,20 @@ namespace Final_Project
 
             // TODO: Add your update logic here
 
+            MediaPlayer.Volume = 0.3f;
+
+            MediaPlayer.IsRepeating = true;
+
             Window.Title = $"{mouseState.X} {mouseState.Y}";
+
+            if (buttonSelectionCooldown > 0) //Button selection cooldown so that options don't get picked automatically when changing screens
+            {
+                buttonSelectionCooldown -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
+            else if (buttonSelectionCooldown <= 0)
+            {
+                buttonSelectionCooldown = 0;
+            }
 
             if (currentScreen == Screen.MainMenu) //The main menu
             {
@@ -352,6 +477,10 @@ namespace Final_Project
 
                     if (mouseState.LeftButton == ButtonState.Pressed) //Play is selected
                     {
+                        menuSoundInstance.Play();
+
+                        buttonSelectionCooldown = 0.1f;
+
                         currentScreen = Screen.Difficulty;
                     }
                 }
@@ -366,6 +495,8 @@ namespace Final_Project
 
                     if (mouseState.LeftButton == ButtonState.Pressed) //Controls is selected
                     {
+                        menuSoundInstance.Play();
+
                         currentScreen = Screen.Controls;
                     }
                 }
@@ -380,6 +511,8 @@ namespace Final_Project
 
                     if (mouseState.LeftButton == ButtonState.Pressed) //Credits is selected
                     {
+                        menuSoundInstance.Play();
+
                         currentScreen = Screen.Information;
                     }
                 }
@@ -392,9 +525,16 @@ namespace Final_Project
                 {
                     hoverQuit = true;
 
-                    if (mouseState.LeftButton == ButtonState.Pressed) //Quit is selected
+                    if (buttonSelectionCooldown == 0) // this is to keep it from automatically quitting the game if you return to the main menu
                     {
-                        this.Exit();
+                        if (mouseState.LeftButton == ButtonState.Pressed) //Quit is selected
+                        {
+                            menuSoundInstance.Play();
+
+                            MediaPlayer.Stop();
+
+                            this.Exit();
+                        }
                     }
                 }
                 else //The mouse isn't hovering the Quit button
@@ -408,63 +548,107 @@ namespace Final_Project
                 {
                     hoverHuman = true;
 
-                    if (mouseState.LeftButton == ButtonState.Pressed) //The player selects the Human difficulty
+                    if (buttonSelectionCooldown == 0)
                     {
-                        boss.GetDifficulty = 1;
-                        player.GetDifficulty = 1;
+                        if (mouseState.LeftButton == ButtonState.Pressed) //The player selects the Human difficulty
+                        {
+                            menuSoundInstance.Play();
 
-                        currentScreen = Screen.FightScreen;
+                            boss.GetDifficulty = 1;
+                            player.GetDifficulty = 1;
+
+                            difficultySelected = Difficulty.Human;
+
+                            MediaPlayer.Stop();
+
+                            MediaPlayer.Play(battleSong);
+
+                            currentScreen = Screen.FightScreen;
+                        }
                     }
                 }
                 else //The mouse isn't hovering the Human button
                 {
                     hoverHuman = false;
                 }
-                
+
                 if (boneHunterRectangle.Contains(mouseState.Position)) //The mouse if hovering over the Bone Hunter button
                 {
                     hoverBoneHunter = true;
 
-                    if (mouseState.LeftButton == ButtonState.Pressed) //The player selects the Bone Hunter difficulty
+                    if (buttonSelectionCooldown == 0)
                     {
-                        boss.GetDifficulty = 2;
-                        player.GetDifficulty = 2;
+                        if (mouseState.LeftButton == ButtonState.Pressed) //The player selects the Bone Hunter difficulty
+                        {
+                            menuSoundInstance.Play();
 
-                        currentScreen = Screen.FightScreen;
+                            boss.GetDifficulty = 2;
+                            player.GetDifficulty = 2;
+
+                            difficultySelected = Difficulty.BoneHunter;
+
+                            MediaPlayer.Stop();
+
+                            MediaPlayer.Play(battleSong);
+
+                            currentScreen = Screen.FightScreen;
+                        }
                     }
                 }
                 else //The mouse isn't hovering the Bone Hunter button
                 {
                     hoverBoneHunter = false;
                 }
-                
+
                 if (lBKRectangle.Contains(mouseState.Position)) //The mouse is hovering the Legendary Bone Knight button 
                 {
                     hoverLBK = true;
 
-                    if (mouseState.LeftButton == ButtonState.Pressed) //The player selects the Legendary Bone Knight difficulty
+                    if (buttonSelectionCooldown == 0)
                     {
-                        boss.GetDifficulty = 3;
-                        player.GetDifficulty = 3;
+                        if (mouseState.LeftButton == ButtonState.Pressed) //The player selects the Legendary Bone Knight difficulty
+                        {
+                            menuSoundInstance.Play();
 
-                        currentScreen = Screen.FightScreen;
+                            boss.GetDifficulty = 3;
+                            player.GetDifficulty = 3;
+
+                            difficultySelected = Difficulty.LegendaryBoneKnight;
+
+                            MediaPlayer.Stop();
+
+                            MediaPlayer.Play(battleSong);
+
+                            currentScreen = Screen.FightScreen;
+                        }
                     }
                 }
                 else //The mouse isn't hovering the Legendary Bone Knoght difficulty
                 {
                     hoverLBK = false;
                 }
-                
+
                 if (mustDieRectangle.Contains(mouseState.Position)) //The mouse is hovering the Must Die button
                 {
                     hoverMustDie = true;
 
-                    if (mouseState.LeftButton == ButtonState.Pressed) //The player selects the Must Die difficulty
+                    if (buttonSelectionCooldown == 0)
                     {
-                        boss.GetDifficulty = 4;
-                        player.GetDifficulty = 4;
+                        if (mouseState.LeftButton == ButtonState.Pressed) //The player selects the Must Die difficulty
+                        {
+                            menuSoundInstance.Play();
 
-                        currentScreen = Screen.FightScreen;
+                            boss.GetDifficulty = 4;
+                            player.GetDifficulty = 4;
+
+                            difficultySelected = Difficulty.MustDie;
+
+                            MediaPlayer.Stop();
+
+                            MediaPlayer.Play(battleSong);
+
+                            currentScreen = Screen.FightScreen;
+                        }
                     }
                 }
                 else //The mouse isn't hovering the Must Die button
@@ -472,12 +656,15 @@ namespace Final_Project
                     hoverMustDie = false;
                 }
 
-                if(quitRectangle.Contains(mouseState.Position)) //The mouse is hovering the Quit button
+                if (quitRectangle.Contains(mouseState.Position)) //The mouse is hovering the Quit button
                 {
                     hoverQuit = true;
 
                     if (mouseState.LeftButton == ButtonState.Pressed) //Quit is selected
                     {
+                        menuSoundInstance.Play();
+
+                        buttonSelectionCooldown = 0.1f;
                         currentScreen = Screen.MainMenu;
                     }
                 }
@@ -488,36 +675,187 @@ namespace Final_Project
             }
             else if (currentScreen == Screen.Controls) //Controls screen
             {
+                if (quitRectangle.Contains(mouseState.Position)) //The mouse is hovering the Quit button
+                {
+                    hoverQuit = true;
 
+                    if (mouseState.LeftButton == ButtonState.Pressed) //Quit is selected
+                    {
+                        menuSoundInstance.Play();
+
+                        buttonSelectionCooldown = 0.1f;
+                        currentScreen = Screen.MainMenu;
+                    }
+                }
+                else //The mouse isn't hovering the Quit button
+                {
+                    hoverQuit = false;
+                }
             }
             else if (currentScreen == Screen.Information) //Information screen
             {
+                if (quitRectangle.Contains(mouseState.Position)) //The mouse is hovering the Quit button
+                {
+                    hoverQuit = true;
 
+                    if (mouseState.LeftButton == ButtonState.Pressed) //Quit is selected
+                    {
+                        menuSoundInstance.Play();
+
+                        buttonSelectionCooldown = 0.1f;
+                        currentScreen = Screen.MainMenu;
+                    }
+                }
+                else //The mouse isn't hovering the Quit button
+                {
+                    hoverQuit = false;
+                }
             }
             else if (currentScreen == Screen.FightScreen) //Fight Screen
-            {   
+            {
                 player.Update(gameTime, keyboardState, mouseState, boss);
 
                 boss.Update(gameTime, player, projectile);
 
                 projectile.Update(gameTime, player, boss);
 
-                if (player.playerDead)
+                timePlayed += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                time = TimeSpan.FromSeconds(timePlayed);
+
+                if (boss.damaged && !scumPlayed) //Plays the boss sound effect when hit
                 {
+                    scumInstance.Play();
+                    scumPlayed = true;
+                }
+                else if (!boss.damaged && scumPlayed) //Resets the sound effect for the next time the boss is hit
+                {
+                    scumPlayed = false;
+                }
+
+                if (player.attacking && !playerAttackPlayed) //Plays the sound effect for the player attack
+                {
+                    playerSlashInstance.Play();
+                    playerAttackPlayed = true;
+                }
+                else if (!player.attacking && playerAttackPlayed) //Resets the sound effect for the next time the player attacks
+                {
+                    playerAttackPlayed = false;
+                }
+
+                if (boss.attacking && !bossAttackPlayed)
+                {
+                    bossAttackInstance.Play();
+                    bossAttackPlayed = true;
+                }
+                else if (!boss.attacking && bossAttackPlayed)
+                {
+                    bossAttackPlayed = false;
+                }
+
+                if (player.playerDead) //Player died
+                {
+                    MediaPlayer.Stop();
+
+                    if (difficultySelected == Difficulty.Human)
+                    {
+                        warmUpInstance.Play();
+                    }
+                    else if (difficultySelected == Difficulty.BoneHunter)
+                    {
+                        wasteOfTimeInstance.Play();
+                    }
+                    else if (difficultySelected == Difficulty.LegendaryBoneKnight)
+                    {
+                        patheticInstance.Play();
+                    }
+                    else if (difficultySelected == Difficulty.MustDie)
+                    {
+                        disapointingInstance.Play();
+                    }
+
+
                     currentScreen = Screen.LoseScreen;
                 }
-                else if (boss.bossDead)
+                else if (boss.bossDead) //Boss died
                 {
+                    MediaPlayer.Stop();
+
+                    howCouldInstance.Play();
+
                     currentScreen = Screen.WinScreen;
                 }
             }
             else if (currentScreen == Screen.WinScreen) //Win screen
             {
 
+                if (MediaPlayer.State == MediaState.Stopped && howCouldInstance.State == SoundState.Stopped)
+                {
+                    MediaPlayer.Play(winSong);
+                }
+
+                if (quitRectangle.Contains(mouseState.Position)) //The mouse is hovering the Quit button
+                {
+                    hoverQuit = true;
+
+                    if (buttonSelectionCooldown == 0) // this is to keep it from automatically quitting the game if you return to the main menu
+                    {
+                        if (mouseState.LeftButton == ButtonState.Pressed) //Quit is selected
+                        {
+                            menuSoundInstance.Play();
+
+                            MediaPlayer.Stop();
+
+                            this.Exit();
+                        }
+                    }
+                }
+                else //The mouse isn't hovering the Quit button
+                {
+                    hoverQuit = false;
+                }
             }
             else if (currentScreen == Screen.LoseScreen) //Lose screen
             {
+                if (MediaPlayer.State == MediaState.Stopped)
+                {
+                    if (difficultySelected == Difficulty.Human && warmUpInstance.State == SoundState.Stopped)
+                    {
+                        MediaPlayer.Play(loseSong);
+                    }
+                    else if (difficultySelected == Difficulty.BoneHunter && wasteOfTimeInstance.State == SoundState.Stopped)
+                    {
+                        MediaPlayer.Play(loseSong);
+                    }
+                    else if (difficultySelected == Difficulty.LegendaryBoneKnight && patheticInstance.State == SoundState.Stopped)
+                    {
+                        MediaPlayer.Play(loseSong);
+                    }
+                    else if (difficultySelected == Difficulty.MustDie && disapointingInstance.State == SoundState.Stopped)
+                    {
+                        MediaPlayer.Play(loseSong);
+                    }
+                }
 
+                if (quitRectangle.Contains(mouseState.Position)) //The mouse is hovering the Quit button
+                {
+                    hoverQuit = true;
+
+                    if (buttonSelectionCooldown == 0) // this is to keep it from automatically quitting the game if you return to the main menu
+                    {
+                        if (mouseState.LeftButton == ButtonState.Pressed) //Quit is selected
+                        {
+                            menuSoundInstance.Play();
+
+                            MediaPlayer.Stop();
+
+                            this.Exit();
+                        }
+                    }
+                }
+                else //The mouse isn't hovering the Quit button
+                {
+                    hoverQuit = false;
+                }
             }
 
             base.Update(gameTime);
@@ -534,6 +872,8 @@ namespace Final_Project
             if (currentScreen == Screen.MainMenu) //Main menu
             {
                 _spriteBatch.Draw(titleCardTexture, background, Color.White);
+
+                _spriteBatch.DrawString(titleFont, "Bones May Cry", new Vector2(335, 5), Color.White);
 
                 if(hoverPlay) //Hovering the play button
                 {
@@ -636,11 +976,35 @@ namespace Final_Project
             }
             else if (currentScreen == Screen.Controls) //Controls screen
             {
+                _spriteBatch.Draw(titleCardTexture, background, Color.White);
 
+                if (hoverQuit) //Hovering the quit button
+                {
+                    _spriteBatch.Draw(quitDownTexture, quitRectangle, Color.White);
+                    _spriteBatch.Draw(returnTexture, informationRectangle, Color.White);
+                }
+                else //Not hovering the quit button 
+                {
+                    _spriteBatch.Draw(quitUpTexture, quitRectangle, Color.White);
+
+                    _spriteBatch.Draw(ctrlsTexture, informationRectangle, Color.White);
+                }
             }
             else if (currentScreen == Screen.Information) //Information screen
             {
+                _spriteBatch.Draw(titleCardTexture, background, Color.White);
 
+                if (hoverQuit) //Hovering the quit button
+                {
+                    _spriteBatch.Draw(quitDownTexture, quitRectangle, Color.White);
+                    _spriteBatch.Draw(returnTexture, informationRectangle, Color.White);
+                }
+                else //Not hovering the quit button 
+                {
+                    _spriteBatch.Draw(quitUpTexture, quitRectangle, Color.White);
+
+                    _spriteBatch.Draw(musicUsedTexture, informationRectangle, Color.White);
+                }
             }
             else if (currentScreen == Screen.FightScreen) //Fight screen
             {
@@ -661,12 +1025,36 @@ namespace Final_Project
                 GraphicsDevice.Clear(Color.Black);
 
                 boss.Draw(_spriteBatch);
+
+                _spriteBatch.DrawString(timeTaken, $"You Took {time.ToString("mm':'ss")} to Win", new Vector2(0, 0), Color.White);
+
+                _spriteBatch.DrawString(titleFont, "Cleared", new Vector2(377, 80), Color.White);
+                if (hoverQuit) //Hovering the quit button
+                {
+                    _spriteBatch.Draw(quitDownTexture, quitRectangle, Color.White);
+                }
+                else //Not hovering the quit button 
+                {
+                    _spriteBatch.Draw(quitUpTexture, quitRectangle, Color.White);
+                }
             }
             else if (currentScreen == Screen.LoseScreen) //Lose screen
             {
                 GraphicsDevice.Clear(Color.Black);
 
                 player.Draw(_spriteBatch);
+
+                _spriteBatch.Draw(gameOverTexture, gameOverRectangle, Color.White);
+                _spriteBatch.DrawString(timeTaken, $"You Took {time.ToString("mm':'ss")} to Die", new Vector2(0, 0), Color.White);
+
+                if (hoverQuit) //Hovering the quit button
+                {
+                    _spriteBatch.Draw(quitDownTexture, quitRectangle, Color.White);
+                }
+                else //Not hovering the quit button 
+                {
+                    _spriteBatch.Draw(quitUpTexture, quitRectangle, Color.White);
+                }
             }
 
             _spriteBatch.End();

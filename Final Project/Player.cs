@@ -29,7 +29,7 @@ namespace Final_Project
         private bool _facingRight = true;
         private bool _jumping;
         private bool _falling;
-        private bool _attacking = false;
+        public bool attacking = false;
         private bool _hitConnected = false;
         private bool _damaged;
 
@@ -60,7 +60,7 @@ namespace Final_Project
             {
                 if (_state != PlayerState.Hurt)
                 {
-                    if (!_attacking) //Prevents idle and attack animations from overriding
+                    if (!attacking) //Prevents idle and attack animations from overriding
                     {
                         _state = PlayerState.Idle;
                     }
@@ -130,15 +130,15 @@ namespace Final_Project
                     //
 
                     //Attacking
-                    if (mouseState.LeftButton == ButtonState.Pressed && !_attacking && _attackCoolDown == 0) //Attack started
+                    if (mouseState.LeftButton == ButtonState.Pressed && !attacking && _attackCoolDown == 0) //Attack started
                     {
                         _state = PlayerState.Attack;
                         _frame = 0;
-                        _attacking = true;
+                        attacking = true;
                         _attackCoolDown = 1.5f;
                     }
 
-                    if (_attacking) //Attacking
+                    if (attacking) //Attacking
                     {
                         _speed.X = 0;
                         _state = PlayerState.Attack;
@@ -413,7 +413,7 @@ namespace Final_Project
                     if (_frame == 3)
                     {
                         _frame = 0;
-                        _attacking = false;
+                        attacking = false;
                     }
                     else
                     {
@@ -522,7 +522,7 @@ namespace Final_Project
         {
             if (_difficulty == 1) //Human
             {
-                _health -= 2;
+                _health -= 4;
             }
             else if (_difficulty == 2) //Bone Hunter
             {

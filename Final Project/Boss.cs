@@ -28,8 +28,8 @@ namespace Final_Project
 
         private bool _active;
         private bool _falling = false;
-        private bool _damaged;
-        public bool phaseTwoTransition;
+        public bool attacking;
+        public bool damaged;
         public bool bossDead;
 
         private bool _facingLeft = true; 
@@ -39,11 +39,6 @@ namespace Final_Project
 
         private float _coolDown;
 
-        private int _side; //This is for phase two. The boss will randomly decide which side it wants to be on. 1 means left side, 2 means right side
-
-        private bool _firedBeam;
-        private bool _landed;
-
         public Boss(List<Texture2D> textures,int x, int y)
         {
             _textures = textures;
@@ -52,9 +47,8 @@ namespace Final_Project
             _health = 100;
             _coolDown = 1;
             bossDead = false;
-            _damaged = false;
-            _firedBeam = false;
-            _landed = false;
+            damaged = false;
+            attacking = false;
         }
 
         public void Update(GameTime gameTime, Player player, Projectile projectile)
@@ -83,6 +77,8 @@ namespace Final_Project
 
                 if (_state == BossState.SlashOne || _state == BossState.SlashTwo) //Slash attack
                 {
+                    attacking = true;
+
                     if (_facingLeft)
                     {
                         if(_location.X > player.playerHurtbox.X + 10)
@@ -109,14 +105,18 @@ namespace Final_Project
                         _speed.X = 6;
                     }
                 }
-                else if (_state == BossState.LightningBolt || _state == BossState.GroundIdle) //Lighting bolt and idle
+                else if (_state == BossState.LightningBolt) //Lighting bolt
                 {
+                    attacking = true;
+
                     _speed.X = 0;
                     _speed.Y = 0;
                 }
                 else if (_state == BossState.Projectile) //Projectile attack
                 {
                     _speed.X = 0;
+
+                    attacking = true;
 
                     if (_frame == 2)
                     {
@@ -159,15 +159,20 @@ namespace Final_Project
                     else if (_location.Bottom >= 490 && _falling) //Landed
                     {
                         _falling = false;
-                        _damaged = false;
+                        damaged = false;
                         _state = BossState.GroundIdle;
                         _location.Y = 490 - _location.Height;
 
-                        if (!_damaged) //If the jump was started after attacking
+                        if (!damaged) //If the jump was started after attacking
                         {
                             StartCooldown();
                         }
                     }
+                }
+                else if (_state == BossState.GroundIdle)
+                {
+                    _speed.X = 0;
+                    _speed.Y = 0;
                 }
 
                 if (bossHitbox.Intersects(player.playerHurtbox) || bossHurtbox.Intersects(player.playerHurtbox)) //Damaged Player
@@ -177,23 +182,31 @@ namespace Final_Project
                     player.Damaged();
                 }
 
+                if (_coolDown > 0 && _state != BossState.Hurt && _state != BossState.Jump) //Makes the boss idle on it's cooldown
+                {
+                    _state = BossState.GroundIdle;
+
+                    _coolDown -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+                }
+                else if (_coolDown <= 0)
+                {
+                    _coolDown = 0;
+                }
             }
             else if (_health == 0) //Dead
             {
                 _speed.X = 0;
                 _speed.Y = 0;
-                _state = BossState.Dead;
-            }
 
-            if (_coolDown > 0 && _state != BossState.Hurt && _state != BossState.Jump) //Makes the boss idle on it's cooldown
-            {
-                _state = BossState.GroundIdle;
-                
-                _coolDown -= (float)gameTime.ElapsedGameTime.TotalSeconds;
-            }
-            else if (_coolDown <= 0)
-            {
-                _coolDown = 0;
+                if (_facingLeft)
+                {
+                    _location = new Rectangle(350, 490 - _location.Height, 139, 105);
+                }
+                else
+                {
+                    _location = new Rectangle(370, 490 - _location.Height, 139, 105);
+                }
+                _state = BossState.Dead;
             }
 
             Move();
@@ -258,6 +271,7 @@ namespace Final_Project
                 _coolDown = 1;
             }
 
+            attacking = false;
             _active = false;
         }
 
@@ -684,7 +698,7 @@ namespace Final_Project
             if (_facingLeft)
             {
                 //Hurtbox
-                if (!_damaged)
+                if (!damaged)
                 {
                     bossHurtbox = new Rectangle(_location.X + 73, _location.Y + 22, _location.Width - 73, _location.Height - 22); //Hurtbox size never needs to change
                 }
@@ -731,7 +745,7 @@ namespace Final_Project
             else
             {
                 //Hurtbox
-                if (!_damaged)
+                if (!damaged)
                 {
                     bossHurtbox = new Rectangle(_location.X, _location.Y + 22, _location.Width - 73, _location.Height - 22); //Hurtbox size never needs to change
                 }
@@ -796,12 +810,13 @@ namespace Final_Project
             {
                 _health = 0;
                 _frame = 0;
+                _state = BossState.Dead;
             }
             else if (_health > 0)
             {
                 _state = BossState.Hurt;
 
-                _damaged = true;
+                damaged = true;
                 bossHurtbox = Rectangle.Empty;
             }
         }
