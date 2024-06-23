@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Final_Project.Content;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -62,6 +63,7 @@ namespace Final_Project
         Player player;
         Boss boss;
         Projectile projectile;
+        PlayerHealthBar playerHealthBar;
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -242,6 +244,10 @@ namespace Final_Project
         Texture2D rectangleTexture;
         //
 
+        //Health Bar Textures
+        Texture2D playerHealthTexture;
+        //
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -315,6 +321,10 @@ namespace Final_Project
 
             //Creates the projectile
             projectile = new Projectile(projectileTexture, 0, 0);
+            //
+
+            //Creates the health bars
+            playerHealthBar = new PlayerHealthBar(playerHealthTexture, 0, 0);
             //
 
             MediaPlayer.Play(menuSong);
@@ -437,6 +447,10 @@ namespace Final_Project
             //Loads fonts
             timeTaken = Content.Load<SpriteFont>("Time Font");
             titleFont = Content.Load<SpriteFont>("Title");
+            //
+
+            //Loads health bars
+            playerHealthTexture = Content.Load<Texture2D>("");
             //
 
             //Loads the rectangle texture for box checking
