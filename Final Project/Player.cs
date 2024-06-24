@@ -31,7 +31,6 @@ namespace Final_Project
         private bool _falling;
         public bool attacking = false;
         private bool _hitConnected = false;
-        private bool _damaged;
 
         public bool playerDead;
 
@@ -49,13 +48,10 @@ namespace Final_Project
             playerDead = false;
         }
 
-        public int Health
+        public void Update(GameTime gameTime, KeyboardState keyboardState, MouseState mouseState, Boss boss, PlayerHealthBar playerHealthBar)
         {
-            get { return _health; }
-        }
+            
 
-        public void Update(GameTime gameTime, KeyboardState keyboardState, MouseState mouseState, Boss boss)
-        {
             if (_state != PlayerState.Dead && !boss.bossDead) //If the fight is going on
             {
                 if (_state != PlayerState.Hurt)
@@ -135,7 +131,7 @@ namespace Final_Project
                         _state = PlayerState.Attack;
                         _frame = 0;
                         attacking = true;
-                        _attackCoolDown = 1.5f;
+                        _attackCoolDown = 5;
                     }
 
                     if (attacking) //Attacking
@@ -225,6 +221,15 @@ namespace Final_Project
                 _speed.X = 0;
                 _speed.Y = 0;
                 _location.Y = 490 - _location.Height;
+                
+                if (_facingLeft)
+                {
+                    _location.X = 400;
+                }
+                else if (_facingRight)
+                {
+                    _location.X = 400;
+                }
             }
             else if (_state != PlayerState.Dead && boss.bossDead) //The boss is killed
             {
@@ -234,6 +239,9 @@ namespace Final_Project
 
                 _state = PlayerState.Idle;
             }
+
+            playerHealthBar.LoseHealth = ((float)_health / 100) * 155;
+            playerHealthBar.Update();
 
             Move();
             GenerateBoxes();
@@ -467,7 +475,7 @@ namespace Final_Project
                     _spriteFrame = new Rectangle(404, 53, 80, 75);
                 }
                 
-                if(_spriteSeconds >= 0.1)
+                if(_spriteSeconds >= 0.2)
                 {
                     if (_frame == 3)
                     {

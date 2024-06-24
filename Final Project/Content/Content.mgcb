@@ -127,6 +127,30 @@
 /processorParam:TextureFormat=Color
 /build:Boss Ground Idle.png
 
+#begin Boss Health Bar Backer.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Boss Health Bar Backer.png
+
+#begin Boss Health Meter.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Boss Health Meter.png
+
 #begin Boss Hurt.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -409,6 +433,30 @@
 /processorParam:Quality=Best
 /build:Pathetic.wav
 
+#begin Player Health Bar Backer.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Player Health Bar Backer.png
+
+#begin Player Health.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Player Health.png
+
 #begin Projectile Sprite.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -680,4 +728,10 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Wasting My Time.wav
+
+#begin You wretch.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:You wretch.mp3
 

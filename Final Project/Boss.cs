@@ -51,7 +51,7 @@ namespace Final_Project
             attacking = false;
         }
 
-        public void Update(GameTime gameTime, Player player, Projectile projectile)
+        public void Update(GameTime gameTime, Player player, Projectile projectile, BossHealthBar bossHealthBar)
         {
             if (_health > 0)
             {
@@ -204,10 +204,13 @@ namespace Final_Project
                 }
                 else
                 {
-                    _location = new Rectangle(370, 490 - _location.Height, 139, 105);
+                    _location = new Rectangle(380, 490 - _location.Height, 139, 105);
                 }
                 _state = BossState.Dead;
             }
+
+            bossHealthBar.LoseHealth = ((float)_health / 100) * 690;
+            bossHealthBar.Update();
 
             Move();
             GenerateBoxes();
@@ -803,7 +806,7 @@ namespace Final_Project
             }
             else if (_difficulty == 3 || _difficulty == 4) //LBK and Must Die
             {
-                _health -= 2;
+                _health -= 4;
             }
 
             if (_health <= 0)

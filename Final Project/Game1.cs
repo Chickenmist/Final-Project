@@ -1,5 +1,4 @@
-﻿using Final_Project.Content;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -64,6 +63,7 @@ namespace Final_Project
         Boss boss;
         Projectile projectile;
         PlayerHealthBar playerHealthBar;
+        BossHealthBar bossHealthBar;
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -72,16 +72,19 @@ namespace Final_Project
 
         Screen currentScreen;
 
-        int currentPlayerHealth;
-
+        //Game time
         float timePlayed;
         TimeSpan time;
+        //
+
+        Random random = new Random();
+
+        int damageSound;
 
         float buttonSelectionCooldown;
 
         KeyboardState keyboardState;
         MouseState mouseState;
-        //PlayerState playerState;
 
         //Player Textures
         List<Texture2D> playerTextures = new List<Texture2D>();
@@ -209,13 +212,16 @@ namespace Final_Project
         SoundEffect scumSFX; //Boss is damaged
         SoundEffectInstance scumInstance;
 
+        SoundEffect youWretchSFX; //Boss is damaged alternate
+        SoundEffectInstance youWretchInstance;
+
         SoundEffect warmUpSFX; //Boss wins on Human
         SoundEffectInstance warmUpInstance;
 
         SoundEffect wasteOfTimeSFX; //Boss wins on Bone Hunter
         SoundEffectInstance wasteOfTimeInstance;
 
-        SoundEffect patheticSFX; //Bons wins on LBK
+        SoundEffect patheticSFX; //Boss wins on LBK
         SoundEffectInstance patheticInstance;
 
         SoundEffect disapointingSFX; //Boss wins on Must Die
@@ -225,7 +231,7 @@ namespace Final_Project
         //Bools to check if a sound has been played
         bool playerAttackPlayed;
         bool bossAttackPlayed;
-        bool scumPlayed;
+        bool damagedPlayed;
         //
 
         //Fonts
@@ -241,11 +247,20 @@ namespace Final_Project
         //
 
         //This is for box checking
-        Texture2D rectangleTexture;
+        //Texture2D rectangleTexture;
         //
 
         //Health Bar Textures
         Texture2D playerHealthTexture;
+        Texture2D playerHealthBackerTexture;
+
+        Texture2D bossHealthTexture;
+        Texture2D bossHealthBackerTexture;
+        //
+
+        //Health Bar Rectangles
+        Rectangle playerHealthBackerRect;
+        Rectangle bossHealthBackerRect;
         //
 
         public Game1()
@@ -282,15 +297,28 @@ namespace Final_Project
             creditsRectangle = new Rectangle(370, 132, 128, 32);
             //
 
+            //Quit button rectangle
             quitRectangle = new Rectangle(370, 166, 128, 32);
-
+            //
+            
+            //Information rectangle
             informationRectangle = new Rectangle(253, 215, 380, 295);
+            //
 
+            //Game over text rectangle
             gameOverRectangle = new Rectangle(170, 40, 620, 162);
+            //
 
             MediaPlayer.Volume = 0.3f;
 
+            //Sets time played as zero
             timePlayed = 0;
+            //
+
+            //Sets health bar rectangles
+            playerHealthBackerRect = new Rectangle(10, 10, 184, 37);
+            bossHealthBackerRect = new Rectangle(80, 510, 800, 30);
+            //
 
             base.Initialize();
             
@@ -324,7 +352,9 @@ namespace Final_Project
             //
 
             //Creates the health bars
-            playerHealthBar = new PlayerHealthBar(playerHealthTexture, 0, 0);
+            playerHealthBar = new PlayerHealthBar(playerHealthTexture, 23, 25); //Position should be over 13 down 15
+
+            bossHealthBar = new BossHealthBar(bossHealthTexture, 136, 520); //Position should be over 56 and down 10 from the backer
             //
 
             MediaPlayer.Play(menuSong);
@@ -358,7 +388,7 @@ namespace Final_Project
             bossDeadTexture = Content.Load<Texture2D>("Boss Dead");
             //
 
-            //loads projectile texture
+            //Loads projectile texture
             projectileTexture = Content.Load<Texture2D>("Projectile Sprite");
             //
 
@@ -404,7 +434,7 @@ namespace Final_Project
             quitGameTexture = Content.Load<Texture2D>("Quit The Game");
             //
 
-            //Load game over and victory
+            //Load game over texture
             gameOverTexture = Content.Load<Texture2D>("Game Over");
             //
 
@@ -423,6 +453,9 @@ namespace Final_Project
 
             scumSFX = Content.Load<SoundEffect>("Scum");
             scumInstance = scumSFX.CreateInstance();
+
+            youWretchSFX = Content.Load<SoundEffect>("You wretch");
+            youWretchInstance = youWretchSFX.CreateInstance();
 
             warmUpSFX = Content.Load<SoundEffect>("Warm Up");
             warmUpInstance = warmUpSFX.CreateInstance();
@@ -450,11 +483,15 @@ namespace Final_Project
             //
 
             //Loads health bars
-            playerHealthTexture = Content.Load<Texture2D>("");
+            playerHealthTexture = Content.Load<Texture2D>("Player Health");
+            playerHealthBackerTexture = Content.Load<Texture2D>("Player Health Bar Backer");
+
+            bossHealthTexture = Content.Load<Texture2D>("Boss Health Meter");
+            bossHealthBackerTexture = Content.Load<Texture2D>("Boss Health Bar Backer");
             //
 
             //Loads the rectangle texture for box checking
-            rectangleTexture = Content.Load<Texture2D>("rectangle");
+            //rectangleTexture = Content.Load<Texture2D>("rectangle");
             //
         }
 
@@ -472,8 +509,6 @@ namespace Final_Project
 
             MediaPlayer.IsRepeating = true;
 
-            Window.Title = $"{mouseState.X} {mouseState.Y}";
-
             if (buttonSelectionCooldown > 0) //Button selection cooldown so that options don't get picked automatically when changing screens
             {
                 buttonSelectionCooldown -= (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -485,6 +520,8 @@ namespace Final_Project
 
             if (currentScreen == Screen.MainMenu) //The main menu
             {
+                Window.Title = "Bones May Cry - Main Menu";
+
                 if (startRectangle.Contains(mouseState.Position)) //Mouse is hovering the play button
                 {
                     hoverPlay = true;
@@ -493,7 +530,7 @@ namespace Final_Project
                     {
                         menuSoundInstance.Play();
 
-                        buttonSelectionCooldown = 0.1f;
+                        buttonSelectionCooldown = 0.5f;
 
                         currentScreen = Screen.Difficulty;
                     }
@@ -539,7 +576,7 @@ namespace Final_Project
                 {
                     hoverQuit = true;
 
-                    if (buttonSelectionCooldown == 0) // this is to keep it from automatically quitting the game if you return to the main menu
+                    if (buttonSelectionCooldown == 0) //This is to keep it from automatically quitting the game if you return to the main menu
                     {
                         if (mouseState.LeftButton == ButtonState.Pressed) //Quit is selected
                         {
@@ -558,6 +595,8 @@ namespace Final_Project
             }
             else if (currentScreen == Screen.Difficulty) //Difficulty selection screen
             {
+                Window.Title = "Bones May Cry - Difficulty Select";
+
                 if (humanRectangle.Contains(mouseState.Position)) //The mouse is hovering the Human button
                 {
                     hoverHuman = true;
@@ -678,7 +717,7 @@ namespace Final_Project
                     {
                         menuSoundInstance.Play();
 
-                        buttonSelectionCooldown = 0.1f;
+                        buttonSelectionCooldown = 0.5f;
                         currentScreen = Screen.MainMenu;
                     }
                 }
@@ -689,6 +728,8 @@ namespace Final_Project
             }
             else if (currentScreen == Screen.Controls) //Controls screen
             {
+                Window.Title = "Bones May Cry - Controls";
+
                 if (quitRectangle.Contains(mouseState.Position)) //The mouse is hovering the Quit button
                 {
                     hoverQuit = true;
@@ -697,7 +738,7 @@ namespace Final_Project
                     {
                         menuSoundInstance.Play();
 
-                        buttonSelectionCooldown = 0.1f;
+                        buttonSelectionCooldown = 0.5f;
                         currentScreen = Screen.MainMenu;
                     }
                 }
@@ -708,6 +749,8 @@ namespace Final_Project
             }
             else if (currentScreen == Screen.Information) //Information screen
             {
+                Window.Title = "Bones May Cry - Information";
+
                 if (quitRectangle.Contains(mouseState.Position)) //The mouse is hovering the Quit button
                 {
                     hoverQuit = true;
@@ -716,7 +759,7 @@ namespace Final_Project
                     {
                         menuSoundInstance.Play();
 
-                        buttonSelectionCooldown = 0.1f;
+                        buttonSelectionCooldown = 0.5f;
                         currentScreen = Screen.MainMenu;
                     }
                 }
@@ -727,23 +770,35 @@ namespace Final_Project
             }
             else if (currentScreen == Screen.FightScreen) //Fight Screen
             {
-                player.Update(gameTime, keyboardState, mouseState, boss);
+                Window.Title = "Bones May Cry";
 
-                boss.Update(gameTime, player, projectile);
+                player.Update(gameTime, keyboardState, mouseState, boss, playerHealthBar);
+
+                boss.Update(gameTime, player, projectile, bossHealthBar);
 
                 projectile.Update(gameTime, player, boss);
 
                 timePlayed += (float)gameTime.ElapsedGameTime.TotalSeconds;
                 time = TimeSpan.FromSeconds(timePlayed);
 
-                if (boss.damaged && !scumPlayed) //Plays the boss sound effect when hit
+                if (boss.damaged && !damagedPlayed) //Plays the boss sound effect when hit
                 {
-                    scumInstance.Play();
-                    scumPlayed = true;
+                    damageSound = random.Next(1, 3);
+
+                    if (damageSound == 1)
+                    {
+                        scumInstance.Play();
+                    }
+                    else if (damageSound == 2)
+                    {
+                        youWretchInstance.Play();
+                    }
+                    
+                    damagedPlayed = true;
                 }
-                else if (!boss.damaged && scumPlayed) //Resets the sound effect for the next time the boss is hit
+                else if (!boss.damaged && damagedPlayed) //Resets the sound effect for the next time the boss is hit
                 {
-                    scumPlayed = false;
+                    damagedPlayed = false;
                 }
 
                 if (player.attacking && !playerAttackPlayed) //Plays the sound effect for the player attack
@@ -801,6 +856,7 @@ namespace Final_Project
             }
             else if (currentScreen == Screen.WinScreen) //Win screen
             {
+                Window.Title = "Bones May Cry - Cleared";
 
                 if (MediaPlayer.State == MediaState.Stopped && howCouldInstance.State == SoundState.Stopped)
                 {
@@ -830,6 +886,8 @@ namespace Final_Project
             }
             else if (currentScreen == Screen.LoseScreen) //Lose screen
             {
+                Window.Title = "Bones May Cry - Game Over";
+
                 if (MediaPlayer.State == MediaState.Stopped)
                 {
                     if (difficultySelected == Difficulty.Human && warmUpInstance.State == SoundState.Stopped)
@@ -887,7 +945,7 @@ namespace Final_Project
             {
                 _spriteBatch.Draw(titleCardTexture, background, Color.White);
 
-                _spriteBatch.DrawString(titleFont, "Bones May Cry", new Vector2(335, 5), Color.White);
+                _spriteBatch.DrawString(titleFont, "Bones May Cry", new Vector2(320, 5), Color.White);
 
                 if(hoverPlay) //Hovering the play button
                 {
@@ -1022,17 +1080,35 @@ namespace Final_Project
             }
             else if (currentScreen == Screen.FightScreen) //Fight screen
             {
+                //Draws the background
                 _spriteBatch.Draw(battleBackgroundTexture, background, Color.White);
+                //
 
+                //Draws the player health bar
+                _spriteBatch.Draw(playerHealthBackerTexture, playerHealthBackerRect, Color.White);
+                playerHealthBar.Draw(_spriteBatch);
+                //
+
+                //Draws the boss health bar
+                _spriteBatch.Draw(bossHealthBackerTexture, bossHealthBackerRect, Color.White);
+                bossHealthBar.Draw(_spriteBatch);
+                //
+
+                //Draws the player and its boxes
                 player.Draw(_spriteBatch);
-                _spriteBatch.Draw(rectangleTexture, player.playerHurtbox, new Color(Color.Black, 0.5f));
-                _spriteBatch.Draw(rectangleTexture, player.playerHitbox, new Color(Color.Red, 0.5f));
+                //_spriteBatch.Draw(rectangleTexture, player.playerHurtbox, new Color(Color.Black, 0.5f));
+                //_spriteBatch.Draw(rectangleTexture, player.playerHitbox, new Color(Color.Red, 0.5f));
+                //
 
+                //Draws the boss and its boxes
                 boss.Draw(_spriteBatch);
-                _spriteBatch.Draw(rectangleTexture, boss.bossHurtbox, new Color(Color.Black, 0.5f));
-                _spriteBatch.Draw(rectangleTexture, boss.bossHitbox, new Color(Color.Red, 0.5f));
+                //_spriteBatch.Draw(rectangleTexture, boss.bossHurtbox, new Color(Color.Black, 0.5f));
+                //_spriteBatch.Draw(rectangleTexture, boss.bossHitbox, new Color(Color.Red, 0.5f));
+                //
 
+                //Draws the projectile 
                 projectile.Draw(_spriteBatch);
+                //
             }
             else if (currentScreen == Screen.WinScreen) //Win screen
             {
